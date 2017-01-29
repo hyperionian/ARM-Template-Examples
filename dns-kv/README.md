@@ -1,0 +1,8 @@
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fhyperionian%2FARM-Templates%2Fmaster%2Fdns-kv%2Ftemplate.json" target="_blank">
+    <img src="http://azuredeploy.net/deploybutton.png"/>
+</a>
+<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fhyperionian%2FARM-Templates%2Fmaster%2Fdns-kv%2Ftemplate.json" target="_blank">
+    <img src="http://armviz.io/visualizebutton.png"/>
+</a>
+
+This template creates Key Vault with one service principal with Azure AD for uploading secret and wrap the secret with KEK
