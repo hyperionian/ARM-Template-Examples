@@ -4,7 +4,7 @@
     "parameters": {
         "vaults_name": {
             "defaultValue": "MyNewKeyVault",
-            "type": "String"
+            "type": "string"
         },
         "tenantId": {
             "type": "string",
