@@ -2,405 +2,132 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "vaults_AKV_Azure_name": {
-            "defaultValue": "AKV-Azure",
+        "vaults_name": {
+            "defaultValue": "MyNewKeyVault",
             "type": "String"
         },
-        "vaults_Vault_VM_name": {
-            "defaultValue": "Vault-VM",
-            "type": "String"
+        "tenantId": {
+            "type": "string",
+            "metadata": {
+                "description": "Tenant Id for the subscription and use assigned access to the vault. Available from the Get-AzureRMSubscription PowerShell cmdlet"
+            }
         },
-        "vaults_KV_Azure_name": {
-            "defaultValue": "KV-Azure",
-            "type": "String"
+        "objectId": {
+            "type": "string",
+            "metadata": {
+                "description": "Object Id of the AAD user or service principal that will have access to the vault. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets"
+            }
         },
-        "dnszones_securityatscale.io_name": {
-            "defaultValue": "securityatscale.io",
-            "type": "String"
+        "keysPermissions": {
+            "type": "array",
+            "defaultValue": [
+                "wrapkey",
+                "unwrapkey"
+            ],
+            "metadata": {
+                "description": "Permissions to grant user to keys in the vault. Valid values are: all, create, import, update, get, list, delete, backup, restore, encrypt, decrypt, wrapkey, unwrapkey, sign, and verify."
+            }
         },
-        "virtualNetworks_vnet_1_name": {
-            "defaultValue": "vnet-1",
-            "type": "String"
+        "secretsPermissions": {
+            "type": "array",
+            "defaultValue": [
+                "Set"
+            ],
+            "metadata": {
+                "description": "Permissions to grant user to secrets in the vault. Valid values are: all, get, set, list, and delete."
+            }
         },
-        "storageAccounts_vmstorageenc_name": {
-            "defaultValue": "vmstorageenc",
-            "type": "String"
+        "vaultSku": {
+            "type": "string",
+            "defaultValue": "Standard",
+            "allowedValues": [
+                "Standard",
+                "Premium"
+            ],
+            "metadata": {
+                "description": "SKU for the vault"
+            }
         },
-        "A_bc_name": {
-            "defaultValue": "securityatscale.io/bc",
-            "type": "String"
+        "enabledForDeployment": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Specifies if the vault is enabled for VM or Service Fabric deployment"
+            }
         },
-        "A_enterprise_name": {
-            "defaultValue": "securityatscale.io/enterprise",
-            "type": "String"
+        "enabledForTemplateDeployment": {
+            "type": "bool",
+            "defaultValue": false,
+            "metadata": {
+                "description": "Specifies if the vault is enabled for ARM template deployment"
+            }
         },
-        "A_fs1_va_name": {
-            "defaultValue": "securityatscale.io/fs1-va",
-            "type": "String"
+        "enableVaultForVolumeEncryption": {
+            "type": "bool",
+            "defaultValue": true,
+            "metadata": {
+                "description": "Specifies if the vault is enabled for volume encryption"
+            }
         },
-        "A_splunk_name": {
-            "defaultValue": "securityatscale.io/splunk",
-            "type": "String"
+        "secretName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the secret to store in the vault"
+            }
         },
-        "CNAME_drop_name": {
-            "defaultValue": "securityatscale.io/drop",
-            "type": "String"
-        },
-        "NS_@_name": {
-            "defaultValue": "securityatscale.io/@",
-            "type": "String"
-        },
-        "SOA_@_name": {
-            "defaultValue": "securityatscale.io/@",
-            "type": "String"
+        "secretValue": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Value of the secret to store in the vault"
+            }
         }
     },
     "variables": {},
     "resources": [
         {
-            "comments": "Generalized from resource: '/subscriptions/e3d814ee-59b5-441b-b81c-a502f8fb505b/resourceGroups/Default-Networking/providers/Microsoft.KeyVault/vaults/AKV-Azure'.",
+            "comments": "Creating a new Azure Key Vault for disk encryption in Australia East.",
             "type": "Microsoft.KeyVault/vaults",
-            "name": "[parameters('vaults_AKV_Azure_name')]",
-            "apiVersion": "2015-06-01",
-            "location": "australiaeast",
-            "tags": {},
-            "properties": {
-                "sku": {
-                    "family": "A",
-                    "name": "Standard"
-                },
-                "tenantId": "c6c141a3-25f4-46fd-bb85-aa7a046e70a9",
-                "accessPolicies": [
-                    {
-                        "tenantId": "c6c141a3-25f4-46fd-bb85-aa7a046e70a9",
-                        "objectId": "d8840cd5-8cea-4444-960b-630101fc6ab5",
-                        "permissions": {
-                            "keys": [
-                                "Backup",
-                                "Create",
-                                "Decrypt",
-                                "Delete",
-                                "Encrypt",
-                                "Get",
-                                "Import",
-                                "List",
-                                "Restore",
-                                "Update"
-                            ],
-                            "secrets": [
-                                "All"
-                            ]
-                        }
-                    }
-                ],
-                "enabledForDeployment": false
-            },
-            "resources": [],
-            "dependsOn": []
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/e3d814ee-59b5-441b-b81c-a502f8fb505b/resourceGroups/Default-Networking/providers/Microsoft.KeyVault/vaults/Vault-VM'.",
-            "type": "Microsoft.KeyVault/vaults",
-            "name": "[parameters('vaults_Vault_VM_name')]",
+            "name": "[parameters('vaults_name')]",
             "apiVersion": "2015-06-01",
             "location": "Australia East",
             "tags": {},
             "properties": {
+                "enabledForDeployment": "[parameters('enabledForDeployment')]",
+                "enabledForTemplateDeployment": "[parameters('enabledForTemplateDeployment')]",
+                "enabledForVolumeEncryption": "[parameters('enableVaultForVolumeEncryption')]",
                 "sku": {
                     "family": "A",
                     "name": "standard"
                 },
-                "tenantId": "c6c141a3-25f4-46fd-bb85-aa7a046e70a9",
+                "tenantId": "[parameters('tenantId')]",
                 "accessPolicies": [
                     {
-                        "tenantId": "c6c141a3-25f4-46fd-bb85-aa7a046e70a9",
-                        "objectId": "d8840cd5-8cea-4444-960b-630101fc6ab5",
+                        "tenantId": "[parameters('tenantId')]",
+                        "objectId": "[parameters('objectId')]",
                         "permissions": {
-                            "keys": [
-                                "Backup",
-                                "Create",
-                                "Delete",
-                                "Get",
-                                "Import",
-                                "List",
-                                "Restore",
-                                "Update"
-                            ],
-                            "secrets": [
-                                "All"
-                            ]
-                        }
-                    },
-                    {
-                        "tenantId": "c6c141a3-25f4-46fd-bb85-aa7a046e70a9",
-                        "objectId": "a96f9b61-c015-4afd-b2a6-249dd3ce1d39",
-                        "permissions": {
-                            "keys": [
-                                "WrapKey"
-                            ],
-                            "secrets": [
-                                "Set"
-                            ]
+                            "keys": "[parameters('keysPermissions')]",
+                            "secrets": "[parameters('secretsPermissions')]"
                         }
                     }
-                ],
-                "enabledForDeployment": false
+                ]
             },
             "resources": [],
             "dependsOn": []
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/e3d814ee-59b5-441b-b81c-a502f8fb505b/resourceGroups/Default-Networking/providers/Microsoft.KeyVault/vaults/KV-Azure'.",
-            "type": "Microsoft.KeyVault/vaults",
-            "name": "[parameters('vaults_KV_Azure_name')]",
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "name": "[concat(parameters('keyVaultName'), '/', parameters('secrets')[copyIndex()].secretName)]",
             "apiVersion": "2015-06-01",
-            "location": "australiasoutheast",
-            "tags": {},
             "properties": {
-                "sku": {
-                    "family": "A",
-                    "name": "Standard"
-                },
-                "tenantId": "c6c141a3-25f4-46fd-bb85-aa7a046e70a9",
-                "accessPolicies": [
-                    {
-                        "tenantId": "c6c141a3-25f4-46fd-bb85-aa7a046e70a9",
-                        "objectId": "d8840cd5-8cea-4444-960b-630101fc6ab5",
-                        "permissions": {
-                            "keys": [
-                                "Get",
-                                "List",
-                                "Update",
-                                "Create",
-                                "Import",
-                                "Delete",
-                                "Backup",
-                                "Restore"
-                            ],
-                            "secrets": [
-                                "All"
-                            ]
-                        }
-                    },
-                    {
-                        "tenantId": "c6c141a3-25f4-46fd-bb85-aa7a046e70a9",
-                        "objectId": "5c6370a0-011f-4641-8f8a-40ed29a1a473",
-                        "permissions": {
-                            "keys": [
-                                "Backup",
-                                "Create",
-                                "Decrypt",
-                                "Delete",
-                                "Encrypt",
-                                "Get",
-                                "Import",
-                                "List",
-                                "Restore",
-                                "Update"
-                            ],
-                            "secrets": []
-                        }
-                    }
-                ],
-                "enabledForDeployment": false
+                "value": "[parameters('secrets')[copyIndex()].secretValue]"
             },
-            "resources": [],
-            "dependsOn": []
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/e3d814ee-59b5-441b-b81c-a502f8fb505b/resourceGroups/default-networking/providers/Microsoft.Network/dnszones/securityatscale.io'.",
-            "type": "Microsoft.Network/dnszones",
-            "name": "[parameters('dnszones_securityatscale.io_name')]",
-            "apiVersion": "2016-04-01",
-            "location": "global",
-            "tags": {},
-            "properties": {
-                "maxNumberOfRecordSets": 5000,
-                "numberOfRecordSets": 7
-            },
-            "resources": [],
-            "dependsOn": []
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/e3d814ee-59b5-441b-b81c-a502f8fb505b/resourceGroups/Default-Networking/providers/Microsoft.Network/virtualNetworks/vnet-1'.",
-            "type": "Microsoft.Network/virtualNetworks",
-            "name": "[parameters('virtualNetworks_vnet_1_name')]",
-            "apiVersion": "2016-03-30",
-            "location": "australiaeast",
-            "properties": {
-                "addressSpace": {
-                    "addressPrefixes": [
-                        "192.168.0.0/16"
-                    ]
-                },
-                "subnets": [
-                    {
-                        "name": "vm-net1",
-                        "properties": {
-                            "addressPrefix": "192.168.1.0/24"
-                        }
-                    }
-                ]
-            },
-            "resources": [],
-            "dependsOn": []
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/e3d814ee-59b5-441b-b81c-a502f8fb505b/resourceGroups/default-networking/providers/Microsoft.Storage/storageAccounts/vmstorageenc'.",
-            "type": "Microsoft.Storage/storageAccounts",
-            "sku": {
-                "name": "Standard_LRS",
-                "tier": "Standard"
-            },
-            "kind": "Storage",
-            "name": "[parameters('storageAccounts_vmstorageenc_name')]",
-            "apiVersion": "2016-01-01",
-            "location": "australiaeast",
-            "tags": {},
-            "properties": {
-                "customDomain": {
-                    "name": "drop.securityatscale.io"
-                }
-            },
-            "resources": [],
-            "dependsOn": []
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/e3d814ee-59b5-441b-b81c-a502f8fb505b/resourceGroups/default-networking/providers/Microsoft.Network/dnszones/securityatscale.io/A/bc'.",
-            "type": "Microsoft.Network/dnszones/A",
-            "name": "[parameters('A_bc_name')]",
-            "apiVersion": "2016-04-01",
-            "properties": {
-                "TTL": 3600,
-                "ARecords": [
-                    {
-                        "ipv4Address": "168.1.34.52"
-                    }
-                ]
-            },
-            "resources": [],
             "dependsOn": [
-                "[resourceId('Microsoft.Network/dnszones', parameters('dnszones_securityatscale.io_name'))]"
-            ]
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/e3d814ee-59b5-441b-b81c-a502f8fb505b/resourceGroups/default-networking/providers/Microsoft.Network/dnszones/securityatscale.io/A/enterprise'.",
-            "type": "Microsoft.Network/dnszones/A",
-            "name": "[parameters('A_enterprise_name')]",
-            "apiVersion": "2016-04-01",
-            "properties": {
-                "TTL": 3600,
-                "ARecords": [
-                    {
-                        "ipv4Address": "104.199.187.60"
-                    }
-                ]
-            },
-            "resources": [],
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/dnszones', parameters('dnszones_securityatscale.io_name'))]"
-            ]
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/e3d814ee-59b5-441b-b81c-a502f8fb505b/resourceGroups/default-networking/providers/Microsoft.Network/dnszones/securityatscale.io/A/fs1-va'.",
-            "type": "Microsoft.Network/dnszones/A",
-            "name": "[parameters('A_fs1_va_name')]",
-            "apiVersion": "2016-04-01",
-            "properties": {
-                "TTL": 3600,
-                "ARecords": [
-                    {
-                        "ipv4Address": "168.1.34.51"
-                    }
-                ]
-            },
-            "resources": [],
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/dnszones', parameters('dnszones_securityatscale.io_name'))]"
-            ]
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/e3d814ee-59b5-441b-b81c-a502f8fb505b/resourceGroups/default-networking/providers/Microsoft.Network/dnszones/securityatscale.io/A/splunk'.",
-            "type": "Microsoft.Network/dnszones/A",
-            "name": "[parameters('A_splunk_name')]",
-            "apiVersion": "2016-04-01",
-            "properties": {
-                "TTL": 3600,
-                "ARecords": [
-                    {
-                        "ipv4Address": "104.199.234.30"
-                    }
-                ]
-            },
-            "resources": [],
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/dnszones', parameters('dnszones_securityatscale.io_name'))]"
-            ]
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/e3d814ee-59b5-441b-b81c-a502f8fb505b/resourceGroups/default-networking/providers/Microsoft.Network/dnszones/securityatscale.io/CNAME/drop'.",
-            "type": "Microsoft.Network/dnszones/CNAME",
-            "name": "[parameters('CNAME_drop_name')]",
-            "apiVersion": "2016-04-01",
-            "properties": {
-                "TTL": 3600,
-                "CNAMERecord": {
-                    "cname": "vmstorageenc.blob.core.windows.net"
-                }
-            },
-            "resources": [],
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/dnszones', parameters('dnszones_securityatscale.io_name'))]"
-            ]
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/e3d814ee-59b5-441b-b81c-a502f8fb505b/resourceGroups/default-networking/providers/Microsoft.Network/dnszones/securityatscale.io/NS/@'.",
-            "type": "Microsoft.Network/dnszones/NS",
-            "name": "[parameters('NS_@_name')]",
-            "apiVersion": "2016-04-01",
-            "properties": {
-                "TTL": 172800,
-                "NSRecords": [
-                    {
-                        "nsdname": "ns1-09.azure-dns.com."
-                    },
-                    {
-                        "nsdname": "ns2-09.azure-dns.net."
-                    },
-                    {
-                        "nsdname": "ns3-09.azure-dns.org."
-                    },
-                    {
-                        "nsdname": "ns4-09.azure-dns.info."
-                    }
-                ]
-            },
-            "resources": [],
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/dnszones', parameters('dnszones_securityatscale.io_name'))]"
-            ]
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/e3d814ee-59b5-441b-b81c-a502f8fb505b/resourceGroups/default-networking/providers/Microsoft.Network/dnszones/securityatscale.io/SOA/@'.",
-            "type": "Microsoft.Network/dnszones/SOA",
-            "name": "[parameters('SOA_@_name')]",
-            "apiVersion": "2016-04-01",
-            "properties": {
-                "TTL": 3600,
-                "SOARecord": {
-                    "email": "azuredns-hostmaster.microsoft.com",
-                    "expireTime": 2419200,
-                    "host": "ns1-09.azure-dns.com.",
-                    "minimumTTL": 300,
-                    "refreshTime": 3600,
-                    "retryTime": 300,
-                    "serialNumber": 1
-                }
-            },
-            "resources": [],
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/dnszones', parameters('dnszones_securityatscale.io_name'))]"
-            ]
+                "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
+            ],
+            "copy": {
+                "name": "secretsCopy",
+                "count": "[length(parameters('secrets'))]"
+            }
         }
     ]
 }
