@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vaults_AKV_Azure_name": {
+            "value": null
+        },
+        "vaults_Vault_VM_name": {
+            "value": null
+        },
+        "vaults_KV_Azure_name": {
+            "value": null
+        },
+        "dnszones_securityatscale.io_name": {
+            "value": null
+        },
+        "virtualNetworks_vnet_1_name": {
+            "value": null
+        },
+        "storageAccounts_vmstorageenc_name": {
+            "value": null
+        },
+        "A_bc_name": {
+            "value": null
+        },
+        "A_enterprise_name": {
+            "value": null
+        },
+        "A_fs1_va_name": {
+            "value": null
+        },
+        "A_splunk_name": {
+            "value": null
+        },
+        "CNAME_drop_name": {
+            "value": null
+        },
+        "NS_@_name": {
+            "value": null
+        },
+        "SOA_@_name": {
+            "value": null
+        }
+    }
+}
