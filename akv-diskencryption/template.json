@@ -15,7 +15,7 @@
         "objectId": {
             "type": "string",
             "metadata": {
-                "description": "Object Id of the AAD user or service principal that will have access to the vault. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets"
+                "description": "Object Id of the AAD user or service principal that will need to access to the vault. Available from the Get-AzureRMADUser or the Get-AzureRMADServicePrincipal cmdlets"
             }
         },
         "keysPermissions": {
@@ -129,5 +129,6 @@
                 "count": "[length(parameters('secrets'))]"
             }
         }
+    
     ]
 }
