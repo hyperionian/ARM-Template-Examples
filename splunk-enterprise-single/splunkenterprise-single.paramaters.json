@@ -17,7 +17,7 @@
     "virtualNetworkName": {
       "value": "SplunkVNet"
     },
-    "domainNamePrefix  ": {
+    "domainNamePrefix": {
       "value": "runningsplunk"
     }
   }
