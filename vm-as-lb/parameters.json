@@ -1,0 +1,42 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminUsername": {
+      "value": ""
+    },
+    "adminPassword": {
+      "value": ""
+    },
+    "vmNamePrefix": {
+      "value": "proxy"
+    },
+    "lbName": {
+      "value": "squidproxyLB"
+    },
+    "nicNamePrefix": {
+      "value": "nic"
+    },
+
+    "vnetName": {
+      "value": ""
+    },
+    "imagePublisher": {
+      "value": "RedHat"
+    },
+    "imageOffer": {
+      "value": "RHEL"
+    },
+    "imageSKU": {
+      "value": "7.3"
+    },
+    "vmSize": {
+      "value": "Standard_D3_v2"
+    },
+    "LBFrontEndIP": {
+      
+      "value":  ""
+   
+    }
+  }
+}

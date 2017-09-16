@@ -41,10 +41,10 @@ param(
  $deploymentName,
 
  [string]
- $templateFilePath = "template.json",
+ $templateFilePath = "azuredeploy.json",
 
  [string]
- $parametersFilePath = "parameters.json"
+ $parametersFilePath = "azuredeploy.parameters.json"
 )
 
 <#
@@ -75,7 +75,7 @@ Write-Host "Selecting subscription '$subscriptionId'";
 Select-AzureRmSubscription -SubscriptionID $subscriptionId;
 
 # Register RPs
-$resourceProviders = @("microsoft.keyvault","microsoft.network","microsoft.storage");
+$resourceProviders = @("microsoft.storage","microsoft.compute","microsoft.network");
 if($resourceProviders.length) {
     Write-Host "Registering resource providers"
     foreach($resourceProvider in $resourceProviders) {
