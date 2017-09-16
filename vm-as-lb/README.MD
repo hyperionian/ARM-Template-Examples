@@ -1,9 +1,9 @@
 # Create an Azure virtual machines in an Avaialbility Set running Windows Server Data Center Core or Red Hat Linux with Internal Load Balancer within an existing Resource Group and VNet
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3%2%2raw.githubusercontent.com%2hyperionian%2ARM-Templates%2master%2vm-as-lb%2azuredeploy.json" target="_blank">
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fhyperionian%2FARM-Templates%2Fmaster%2Fvm-as-lb%2Fazuredeploy.json" target="_blank">
   <img src="http://azuredeploy.net/deploybutton.png"/>
 </a>
-<a href="http://armviz.io/#/?load=https%3%2%2raw.githubusercontent.com%2hyperionian%2ARM-Templates%2master%2vm-as-lb%2azuredeploy.json" target="_blank">
+<a href="http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fhyperionian%2FARM-Templates%2Fmaster%F2vm-as-lb%2Fazuredeploy.json" target="_blank">
   <img src="http://armviz.io/visualizebutton.png"/>
 </a>
 
