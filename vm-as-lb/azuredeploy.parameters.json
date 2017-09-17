@@ -9,10 +9,10 @@
       "value": ""
     },
     "vmNamePrefix": {
-      "value": "proxy"
+      "value": ""
     },
     "lbName": {
-      "value": "squidproxyLB"
+      "value": ""
     },
     "nicNamePrefix": {
       "value": "nic"
@@ -34,7 +34,6 @@
       "value": "Standard_D3_v2"
     },
     "LBFrontEndIP": {
-      
       "value":  ""
    
     }

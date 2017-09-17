@@ -3,7 +3,6 @@
     "contentVersion": "1.0.0.0",
   "parameters": {
     "adminUsername": {
-      "defaultValue": "proxyadmin",
       "type": "string",
       "metadata": {
         "description": "Admin username"
@@ -16,14 +15,12 @@
       }
     },
     "vmNamePrefix": {
-      "defaultValue": "squidproxy",
       "type": "string",
       "metadata": {
         "description": "VM name prefix"
       }
     },
     "lbName": {
- 
       "type": "string",
       "metadata": {
         "description": "Load Balancer name"
@@ -36,9 +33,7 @@
         "description": "Network Interface Name Prefix"
       }
     },
-
     "vnetName": {
-
       "type": "string",
       "metadata": {
         "description": "VNET name"
@@ -119,13 +114,11 @@
       }
     },
     "LBFrontEndIP": {
- 
-      "type": "string",
+       "type": "string",
       "metadata": {
         "description": "LB FrontEnd IP"
       }
     }
-   
   },
   "variables": {
     "vnetID": "[resourceId(resourceGroup().name, 'Microsoft.Networks/virtualNetworks' ,parameters('vnetName'))]",
@@ -319,4 +312,4 @@
             ]
         }
     ]
-}
+  }
