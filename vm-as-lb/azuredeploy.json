@@ -121,9 +121,9 @@
     },
     "moduleURL": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "https://raw.githubusercontent.com/hyperionian/ARM-Templates/blob/master/vm-as-lb/AddFirewallRuleToNewGroup.zip",
      "metadata": {
-       "description": "LB FrontEnd IP"
+       "description": "DSC module location"
      }
    }
    
