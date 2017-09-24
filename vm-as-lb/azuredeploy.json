@@ -1,350 +1,336 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
-    "contentVersion": "1.0.0.0",
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
   "parameters": {
-    "adminUsername": {
-      "type": "string",
-      "metadata": {
-        "description": "Admin username"
+      "adminUsername": {
+          "type": "String",
+          "metadata": {
+              "description": "Admin username"
+          }
+      },
+      "adminPassword": {
+          "type": "SecureString",
+          "metadata": {
+              "description": "Admin password"
+          }
+      },
+      "vmNamePrefix": {
+          "type": "String",
+          "metadata": {
+              "description": "VM name prefix"
+          }
+      },
+      "lbName": {
+          "type": "String",
+          "metadata": {
+              "description": "Load Balancer name"
+          }
+      },
+      "nicNamePrefix": {
+          "defaultValue": "nic",
+          "type": "String",
+          "metadata": {
+              "description": "Network Interface Name Prefix"
+          }
+      },
+      "vnetName": {
+          "type": "String",
+          "metadata": {
+              "description": "VNET name"
+          }
+      },
+      "imagePublisher": {
+          "defaultValue": "RedHat",
+          "allowedValues": [
+              "RedHat",
+              "MicrosoftWindowsServer"
+          ],
+          "type": "String",
+          "metadata": {
+              "description": "Image Publisher"
+          }
+      },
+      "imageOffer": {
+          "defaultValue": "RHEL",
+          "allowedValues": [
+              "RHEL",
+              "WindowsServer"
+          ],
+          "type": "String",
+          "metadata": {
+              "description": "Image Offer"
+          }
+      },
+      "imageSKU": {
+          "defaultValue": "7.3",
+          "allowedValues": [
+              "7.3",
+              "2016-Datacenter-Server-Core",
+              "2016-DataCenter"
+          ],
+          "type": "String",
+          "metadata": {
+              "description": "Image SKU"
+          }
+      },
+      "vmSize": {
+          "defaultValue": "Standard_D1_v2",
+          "allowedValues": [
+              "Standard_D1_v2",
+              "Standard_D2_v2",
+              "Standard_D3_v2",
+              "Standard_D4_v2",
+              "Standard_D5_v2",
+              "Standard_D11_v2",
+              "Standard_D12_v2",
+              "Standard_D13_v2",
+              "Standard_D14_v2",
+              "Standard_D15_v2"
+          ],
+          "type": "String",
+          "metadata": {
+              "description": "VM Size"
+          }
+      },
+      "subnetName": {
+          "type": "String",
+          "metadata": {
+              "description": "Subnet Name where the Proxy Servers are deployed onto"
+          }
+      },
+      "numberOfInstances": {
+          "defaultValue": 3,
+          "maxValue": 100,
+          "type": "Int",
+          "metadata": {
+              "description": "Number of Proxy Instances (max 100)"
+          }
+      },
+      "privateIPAllocationMethod": {
+          "defaultValue": "Static",
+          "type": "String",
+          "metadata": {
+              "description": "LB IP allocation"
+          }
+      },
+      "LBFrontEndIP": {
+          "type": "String",
+          "metadata": {
+              "description": "LB FrontEnd IP"
+          }
+      },
+      "moduleURL": {
+          "defaultValue": "https://github.com/hyperionian/ARM-Templates/raw/master/vm-as-lb/addfirewallrule.zip",
+          "type": "string",
+          "metadata": {
+              "description": "DSC module location"
+          }
       }
-    },
-    "adminPassword": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Admin password"
-      }
-    },
-    "vmNamePrefix": {
-      "type": "string",
-      "metadata": {
-        "description": "VM name prefix"
-      }
-    },
-    "lbName": {
-      "type": "string",
-      "metadata": {
-        "description": "Load Balancer name"
-      }
-    },
-    "nicNamePrefix": {
-      "defaultValue": "nic",
-      "type": "string",
-      "metadata": {
-        "description": "Network Interface Name Prefix"
-      }
-    },
-    "vnetName": {
-      "type": "string",
-      "metadata": {
-        "description": "VNET name"
-      }
-    },
-    "imagePublisher": {
-      "defaultValue": "RedHat",
-      "type": "string",
-      "allowedValues": [
-        "RedHat",
-        "MicrosoftWindowsServer"
-      ],
-      "metadata": {
-        "description": "Image Publisher"
-      }
-    },
-    "imageOffer": {
-      "defaultValue": "RHEL",
-      "type": "string",
-      "allowedValues": [
-        "RHEL",
-        "WindowsServer"
-      ],
-      "metadata": {
-        "description": "Image Offer"
-      }
-    },
-    "imageSKU": {
-      "defaultValue": "7.3",
-      "type": "string",
-      "allowedValues": [
-        "7.3",
-        "2016-Datacenter-Server-Core"
-      ],
-      "metadata": {
-        "description": "Image SKU"
-      }
-    },
-    "vmSize": {
-      "defaultValue": "Standard_D3_v2",
-      "allowedValues": [
-        "Standard_D1_v2",
-        "Standard_D2_v2",
-        "Standard_D3_v2",
-        "Standard_D4_v2",
-        "Standard_D5_v2",
-        "Standard_D11_v2",
-        "Standard_D12_v2",
-        "Standard_D13_v2",
-        "Standard_D14_v2",
-        "Standard_D15_v2"
-      ],
-      "type": "string",
-      "metadata": {
-        "description": "VM Size"
-      }
-    },
-    "subnetName": {
-
-      "type": "string",
-      "metadata": {
-        "description": "Subnet Name where the Proxy Servers are deployed onto"
-      }
-    },
-    "numberOfInstances": {
-      "defaultValue": 3,
-      "type": "int",
-      "maxValue": 100,
-      "metadata": {
-        "description": "Number of Proxy Instances (max 100)"
-      }
-    },
-    "privateIPAllocationMethod": {
-      "defaultValue": "Static",
-      "type": "string",
-      "metadata": {
-        "description": "LB IP allocation"
-      }
-    },
-    "LBFrontEndIP": {
-       "type": "string",
-      "metadata": {
-        "description": "LB FrontEnd IP"
-      }
-    },
-    "moduleURL": {
-      "type": "string",
-      "defaultValue": "https://raw.githubusercontent.com/hyperionian/ARM-Templates/blob/master/vm-as-lb/AddFirewallRuleToNewGroup.zip",
-     "metadata": {
-       "description": "DSC module location"
-     }
-   }
-   
   },
   "variables": {
-    "vnetID": "[resourceId(resourceGroup().name, 'Microsoft.Networks/virtualNetworks' ,parameters('vnetName'))]",
-    "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/loadBalancerFrontend')]",
-    "lbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('lbName'))]",
-    "storageAccountName": "[concat(parameters('vmNamePrefix'), uniqueString(resourceGroup().id))]",
-    "storageAccountType": "Standard_LRS",
-    "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]",
-    "availabilitySetName": "squidProxyavSet",
-    "osDiskName": "[concat('osdisk', uniqueString(resourceGroup().id))]",
-    "vmStorageAccountContainerName": "vhds",
-    "vmExtensionName": "dscwindowsfirewall"
+      "vnetID": "[resourceId(resourceGroup().name, 'Microsoft.Networks/virtualNetworks' ,parameters('vnetName'))]",
+      "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/loadBalancerFrontend')]",
+      "lbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('lbName'))]",
+      "storageAccountName": "[concat(parameters('vmNamePrefix'), uniqueString(resourceGroup().id))]",
+      "storageAccountType": "Standard_LRS",
+      "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]",
+      "availabilitySetName": "[concat(parameters('vmNamePrefix'),'avset')]",
+      "osDiskName": "[concat('osdisk', uniqueString(resourceGroup().id))]",
+      "vmStorageAccountContainerName": "vhds",
+      "vmExtensionName": "dscwindowsfirewall"
   },
-    "resources": [
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('storageAccountName')]",
-            "apiVersion": "2017-06-01",
-            "location": "[resourceGroup().location]",
-            "sku": {
+  "resources": [
+      {
+          "type": "Microsoft.Storage/storageAccounts",
+          "sku": {
               "name": "[variables('storageAccountType')]"
           },
-           "kind": "Storage",
-           "properties": {
-                
-            }
-        },
-        {
-            "type": "Microsoft.Compute/availabilitySets",
-            "name": "[variables('availabilitySetName')]",
-            "apiVersion": "2015-06-15",
-            "location": "[resourceGroup().location]",
-            "properties": {
-                "platformFaultDomainCount": "1",
-                "platformUpdateDomainCount": "2"
-              
-            }
-        },
-   
-        {
-            "type": "Microsoft.Network/networkInterfaces",
-            "name": "[concat(parameters('nicNamePrefix'), copyindex())]",
-            "apiVersion": "2017-09-01",
-            "location": "[resourceGroup().location]",
-            "copy": {
-                "name": "nicLoop",
-                "count": "[parameters('numberOfInstances')]"
-            },
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig1",
-                        "properties": {
-                            "privateIPAllocationMethod": "Dynamic",
-                            "subnet": {
-                                "id": "[variables('subnetRef')]"
-                            },
-                            "loadBalancerBackendAddressPools": [
-                                {
-                                    "id": "[concat(variables('lbID'), '/backendAddressPools/LoadBalancerBackend')]"
-                                }
-                            ]
-                            
-                        }
-                    }
-                ]
-            },
-            "dependsOn": [
-                "[concat('Microsoft.Network/loadBalancers/', parameters('lbName'))]"
-             
-            ]
-        },
-        {
-            "type": "Microsoft.Network/loadBalancers",
-            "name": "[parameters('lbName')]",
-            "apiVersion": "2017-09-01",
-            "location": "[resourceGroup().location]",
+          "kind": "Storage",
+          "name": "[variables('storageAccountName')]",
+          "apiVersion": "2017-06-01",
+          "location": "[resourceGroup().location]",
+          "properties": {}
+      },
+      {
+          "type": "Microsoft.Compute/availabilitySets",
+          "name": "[variables('availabilitySetName')]",
+          "apiVersion": "2015-06-15",
+          "location": "[resourceGroup().location]",
           "properties": {
-            "frontendIPConfigurations": [
-              {
-                "name": "LoadBalancerFrontend",
-                "properties": {
-                  "privateIPAllocationMethod": "[parameters('privateIPAllocationMethod')]",
-                  "privateIPAddress": "[parameters('LBFrontEndIP')]",
-                  "subnet": {
-                    "id": "[variables('subnetRef')]"
-                  }
-                }
-              }
-            ],
-            "backendAddressPools": [
-              {
-                "name": "LoadBalancerBackend"
-              }
-            ],
-            "loadBalancingRules": [
-              {
-                "name": "[concat(parameters('lbName'),'ProxyRule')]",
-                
-                "properties": {
-                  "frontendIPConfiguration": {
-                    "id": "[variables('frontEndIPConfigID')]"
-                  },
-                  "frontendPort": 8080,
-                  "backendPort": 8080,
-                  "enableFloatingIP": false,
-                  "idleTimeoutInMinutes": 4,
-                  "protocol": "Tcp",
-                  "loadDistribution": "Default",
-                  "backendAddressPool": {
-                    "id": "[concat(variables('lbID'), '/backendAddressPools/LoadBalancerBackend')]"
-                  },
-                  "probe": {
-                    "id": "[concat(variables('lbID'), '/probes/ProxyProbe')]"
-                  }
-                }
-              }
-            ],
-            "probes": [
-              {
-                "name": "ProxyProbe",
-                
-                "properties": {
-                 
-                  "protocol": "Http",
-                  "port": 8080,
-                  "requestPath": "/",
-                  "intervalInSeconds": 5,
-                  "numberOfProbes": 2
-                }
-              }
-            ]
+              "platformFaultDomainCount": "1",
+              "platformUpdateDomainCount": "2"
           }
-            
-        },
-        
-        {
-            "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat(parameters('vmNamePrefix'), copyindex())]",
-            "apiVersion": "2017-03-30",
-            "location": "[resourceGroup().location]",
-            "copy": {
-                "name": "virtualMachineLoop",
-                "count": "[parameters('numberOfInstances')]"
-            },
-            "properties": {
-                "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('availabilitySetName'))]"
-                },
-                "hardwareProfile": {
-                    "vmSize": "[parameters('vmSize')]"
-                },
-                "osProfile": {
-                    "computerName": "[concat(parameters('vmNamePrefix'), copyIndex())]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
-                },
-                "storageProfile": {
-                    "imageReference": {
-                        "publisher": "[parameters('imagePublisher')]",
-                        "offer": "[parameters('imageOffer')]",
-                        "sku": "[parameters('imageSKU')]",
-                        "version": "latest"
-                    },
-                    "osDisk": {
+      },
+      {
+          "type": "Microsoft.Network/networkInterfaces",
+          "name": "[concat(parameters('nicNamePrefix'), copyindex())]",
+          "apiVersion": "2017-09-01",
+          "location": "[resourceGroup().location]",
+          "copy": {
+              "name": "nicLoop",
+              "count": "[parameters('numberOfInstances')]"
+          },
+          "properties": {
+              "ipConfigurations": [
+                  {
+                      "name": "ipconfig1",
+                      "properties": {
+                          "privateIPAllocationMethod": "Dynamic",
+                          "subnet": {
+                              "id": "[variables('subnetRef')]"
+                          },
+                          "loadBalancerBackendAddressPools": [
+                              {
+                                  "id": "[concat(variables('lbID'), '/backendAddressPools/LoadBalancerBackend')]"
+                              }
+                          ]
+                      }
+                  }
+              ]
+          },
+          "dependsOn": [
+              "[concat('Microsoft.Network/loadBalancers/', parameters('lbName'))]"
+          ]
+      },
+      {
+          "type": "Microsoft.Network/loadBalancers",
+          "name": "[parameters('lbName')]",
+          "apiVersion": "2017-09-01",
+          "location": "[resourceGroup().location]",
+          "properties": {
+              "frontendIPConfigurations": [
+                  {
+                      "name": "LoadBalancerFrontend",
+                      "properties": {
+                          "privateIPAllocationMethod": "[parameters('privateIPAllocationMethod')]",
+                          "privateIPAddress": "[parameters('LBFrontEndIP')]",
+                          "subnet": {
+                              "id": "[variables('subnetRef')]"
+                          }
+                      }
+                  }
+              ],
+              "backendAddressPools": [
+                  {
+                      "name": "LoadBalancerBackend"
+                  }
+              ],
+              "loadBalancingRules": [
+                  {
+                      "name": "[concat(parameters('lbName'),'ProxyRule')]",
+                      "properties": {
+                          "frontendIPConfiguration": {
+                              "id": "[variables('frontEndIPConfigID')]"
+                          },
+                          "frontendPort": 8080,
+                          "backendPort": 8080,
+                          "enableFloatingIP": false,
+                          "idleTimeoutInMinutes": 4,
+                          "protocol": "Tcp",
+                          "loadDistribution": "Default",
+                          "backendAddressPool": {
+                              "id": "[concat(variables('lbID'), '/backendAddressPools/LoadBalancerBackend')]"
+                          },
+                          "probe": {
+                              "id": "[concat(variables('lbID'), '/probes/ProxyProbe')]"
+                          }
+                      }
+                  }
+              ],
+              "probes": [
+                  {
+                      "name": "ProxyProbe",
+                      "properties": {
+                          "protocol": "Http",
+                          "port": 8080,
+                          "requestPath": "/",
+                          "intervalInSeconds": 5,
+                          "numberOfProbes": 2
+                      }
+                  }
+              ]
+          }
+      },
+      {
+          "type": "Microsoft.Compute/virtualMachines",
+          "name": "[concat(parameters('vmNamePrefix'), copyindex())]",
+          "apiVersion": "2017-03-30",
+          "location": "[resourceGroup().location]",
+          "copy": {
+              "name": "virtualMachineLoop",
+              "count": "[parameters('numberOfInstances')]"
+          },
+          "properties": {
+              "availabilitySet": {
+                  "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('availabilitySetName'))]"
+              },
+              "hardwareProfile": {
+                  "vmSize": "[parameters('vmSize')]"
+              },
+              "osProfile": {
+                  "computerName": "[concat(parameters('vmNamePrefix'), copyIndex())]",
+                  "adminUsername": "[parameters('adminUsername')]",
+                  "adminPassword": "[parameters('adminPassword')]"
+              },
+              "storageProfile": {
+                  "imageReference": {
+                      "publisher": "[parameters('imagePublisher')]",
+                      "offer": "[parameters('imageOffer')]",
+                      "sku": "[parameters('imageSKU')]",
+                      "version": "latest"
+                  },
+                  "osDisk": {
                       "name": "[concat(parameters('vmNamePrefix'),'OSdisk', copyIndex())]",
                       "vhd": {
-                        "uri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName')), '2015-06-15').primaryEndpoints.blob, variables('vmStorageAccountContainerName'),'/',variables('osDiskName'), copyIndex(),'.vhd')]"
+                          "uri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName')), '2015-06-15').primaryEndpoints.blob, variables('vmStorageAccountContainerName'),'/',variables('osDiskName'), copyIndex(),'.vhd')]"
                       },
                       "caching": "ReadWrite",
                       "createOption": "FromImage"
-                    }
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('nicNamePrefix'),copyindex()))]"
-                        }
-                    ]
-                },
-                "diagnosticsProfile": {
-                    "bootDiagnostics": {
-                        "enabled": true,
-                        "storageUri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net')]"
-                    }
-                }
-            },
-            "resources": [ {
-                "type": "extensions",
-                "name": "[concat(parameters('vmNamePrefix'),'/', variables('vmExtensionName'))]",
-                "apiVersion": "2015-05-01-preview",
-                "location": "[resourceGroup().location]",
-                "dependsOn": [
-                    "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNamePrefix'), copyindex())]"
-                ],
-                "properties": {
-                    "publisher": "Microsoft.Powershell",
-                    "type": "DSC",
-                    "typeHandlerVersion": "2.19",
-                    "autoUpgradeMinorVersion": true,
-                    "settings": {
-                        "configuration": {
-                                    "url": "[parameters('moduleUrl')]",
-                                    "script": "AddFirewallRuleToNewGroup.ps1",
-                                    "function": "AddFirewallRuleToNewGroup"
-                                }
-                       
-                    }
-                   
-                }
-            }
+                  }
+              },
+              "networkProfile": {
+                  "networkInterfaces": [
+                      {
+                          "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('nicNamePrefix'),copyindex()))]"
+                      }
+                  ]
+              },
+              "diagnosticsProfile": {
+                  "bootDiagnostics": {
+                      "enabled": true,
+                      "storageUri": "[concat('http://',variables('storageAccountName'),'.blob.core.windows.net')]"
+                  }
+              }
+          },
+          "resources": [
+              {
+                  "type": "extensions",
+                  "name": "[variables('vmExtensionName')]",
+                  "apiVersion": "2015-05-01-preview",
+                  "location": "[resourceGroup().location]",
+                  "properties": {
+                      "publisher": "Microsoft.Powershell",
+                      "type": "DSC",
+                      "typeHandlerVersion": "2.19",
+                      "autoUpgradeMinorVersion": true,
+                      "settings": {
+                          "configuration": {
+                              "url": "[parameters('moduleUrl')]",
+                              "script": "addfirewallrule.ps1",
+                              "function": "addfirewallrule"
+                          }
+                      }
+                  },
+                  "dependsOn": [
+                      "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNamePrefix'), copyindex())]"
+                  ]
+              }
           ],
-            "dependsOn": [
-                "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
-                "[concat('Microsoft.Network/networkInterfaces/', parameters('nicNamePrefix'), copyindex())]",
-                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
-            ]
-        }
-        
-    ]
-  }
+          "dependsOn": [
+              "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
+              "[concat('Microsoft.Network/networkInterfaces/', parameters('nicNamePrefix'), copyindex())]",
+              "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
+          ]
+      }
+  ]
+}
