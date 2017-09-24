@@ -118,7 +118,15 @@
       "metadata": {
         "description": "LB FrontEnd IP"
       }
-    }
+    },
+    "moduleURL": {
+      "type": "string",
+      "defaultValue": "",
+     "metadata": {
+       "description": "LB FrontEnd IP"
+     }
+   }
+   
   },
   "variables": {
     "vnetID": "[resourceId(resourceGroup().name, 'Microsoft.Networks/virtualNetworks' ,parameters('vnetName'))]",
@@ -129,7 +137,8 @@
     "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]",
     "availabilitySetName": "squidProxyavSet",
     "osDiskName": "[concat('osdisk', uniqueString(resourceGroup().id))]",
-    "vmStorageAccountContainerName": "vhds"
+    "vmStorageAccountContainerName": "vhds",
+    "vmExtensionName": "dscwindowsfirewall"
   },
     "resources": [
         {
@@ -305,11 +314,37 @@
                     }
                 }
             },
+            "resources": [ {
+                "type": "extensions",
+                "name": "[concat(parameters('vmNamePrefix'),'/', variables('vmExtensionName'))]",
+                "apiVersion": "2015-05-01-preview",
+                "location": "[resourceGroup().location]",
+                "dependsOn": [
+                    "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNamePrefix'), copyindex())]"
+                ],
+                "properties": {
+                    "publisher": "Microsoft.Powershell",
+                    "type": "DSC",
+                    "typeHandlerVersion": "2.19",
+                    "autoUpgradeMinorVersion": true,
+                    "settings": {
+                        "configuration": {
+                                    "url": "[parameters('moduleUrl')]",
+                                    "script": "AddFirewallRuleToNewGroup.ps1",
+                                    "function": "AddFirewallRuleToNewGroup"
+                                }
+                       
+                    }
+                   
+                }
+            }
+          ],
             "dependsOn": [
                 "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
                 "[concat('Microsoft.Network/networkInterfaces/', parameters('nicNamePrefix'), copyindex())]",
                 "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
             ]
         }
+        
     ]
   }
