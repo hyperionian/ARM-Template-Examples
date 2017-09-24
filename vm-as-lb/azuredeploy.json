@@ -120,7 +120,7 @@
           }
       },
       "moduleURL": {
-          "defaultValue": "https://github.com/hyperionian/ARM-Templates/raw/master/vm-as-lb/addfirewallrule.zip",
+          "defaultValue": "https://github.com/hyperionian/ARM-Templates/raw/master/vm-as-lb/DSC/addfirewallrule.zip",
           "type": "string",
           "metadata": {
               "description": "DSC module location"
