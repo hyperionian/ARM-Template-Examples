@@ -20,7 +20,7 @@
               "description": "VM name prefix"
           }
       },
-      "lbName": {
+      "LBName": {
           "type": "string",
           "metadata": {
               "description": "Load Balancer name"
