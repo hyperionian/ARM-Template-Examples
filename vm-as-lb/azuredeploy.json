@@ -3,38 +3,38 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
       "adminUsername": {
-          "type": "String",
+          "type": "string",
           "metadata": {
               "description": "Admin username"
           }
       },
       "adminPassword": {
-          "type": "SecureString",
+          "type": "securestring",
           "metadata": {
               "description": "Admin password"
           }
       },
       "vmNamePrefix": {
-          "type": "String",
+          "type": "string",
           "metadata": {
               "description": "VM name prefix"
           }
       },
       "lbName": {
-          "type": "String",
+          "type": "string",
           "metadata": {
               "description": "Load Balancer name"
           }
       },
       "nicNamePrefix": {
           "defaultValue": "nic",
-          "type": "String",
+          "type": "string",
           "metadata": {
               "description": "Network Interface Name Prefix"
           }
       },
       "vnetName": {
-          "type": "String",
+          "type": "string",
           "metadata": {
               "description": "VNET name"
           }
@@ -45,7 +45,7 @@
               "RedHat",
               "MicrosoftWindowsServer"
           ],
-          "type": "String",
+          "type": "string",
           "metadata": {
               "description": "Image Publisher"
           }
@@ -56,7 +56,7 @@
               "RHEL",
               "WindowsServer"
           ],
-          "type": "String",
+          "type": "string",
           "metadata": {
               "description": "Image Offer"
           }
@@ -68,7 +68,7 @@
               "2016-Datacenter-Server-Core",
               "2016-DataCenter"
           ],
-          "type": "String",
+          "type": "string",
           "metadata": {
               "description": "Image SKU"
           }
@@ -87,13 +87,13 @@
               "Standard_D14_v2",
               "Standard_D15_v2"
           ],
-          "type": "String",
+          "type": "string",
           "metadata": {
               "description": "VM Size"
           }
       },
       "subnetName": {
-          "type": "String",
+          "type": "string",
           "metadata": {
               "description": "Subnet Name where the Proxy Servers are deployed onto"
           }
@@ -101,20 +101,14 @@
       "numberOfInstances": {
           "defaultValue": 3,
           "maxValue": 100,
-          "type": "Int",
+          "type": "int",
           "metadata": {
               "description": "Number of Proxy Instances (max 100)"
           }
       },
-      "privateIPAllocationMethod": {
-          "defaultValue": "Static",
-          "type": "String",
-          "metadata": {
-              "description": "LB IP allocation"
-          }
-      },
+      
       "LBFrontEndIP": {
-          "type": "String",
+          "type": "string",
           "metadata": {
               "description": "LB FrontEnd IP"
           }
@@ -137,7 +131,8 @@
       "availabilitySetName": "[concat(parameters('vmNamePrefix'),'avset')]",
       "osDiskName": "[concat('osdisk', uniqueString(resourceGroup().id))]",
       "vmStorageAccountContainerName": "vhds",
-      "vmExtensionName": "dscwindowsfirewall"
+      "vmExtensionName": "dscwindowsfirewall",
+      "privateIPAllocationMethod": "static"
   },
   "resources": [
       {
@@ -202,7 +197,7 @@
                   {
                       "name": "LoadBalancerFrontend",
                       "properties": {
-                          "privateIPAllocationMethod": "[parameters('privateIPAllocationMethod')]",
+                          "privateIPAllocationMethod": "[variables('privateIPAllocationMethod')]",
                           "privateIPAddress": "[parameters('LBFrontEndIP')]",
                           "subnet": {
                               "id": "[variables('subnetRef')]"
@@ -306,6 +301,7 @@
               {
                   "type": "extensions",
                   "name": "[variables('vmExtensionName')]",
+                  "condition": "[equals(parameters('imagePublisher'),'MicrosoftWindowsServer')]",
                   "apiVersion": "2015-05-01-preview",
                   "location": "[resourceGroup().location]",
                   "properties": {

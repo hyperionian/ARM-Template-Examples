@@ -31,11 +31,10 @@
       "value": "7.3"
     },
     "vmSize": {
-      "value": "Standard_D3_v2"
+      "value": "Standard_D1_v2"
     },
     "LBFrontEndIP": {
       "value":  ""
-   
     }
   }
 }

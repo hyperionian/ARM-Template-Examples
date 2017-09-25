@@ -23,6 +23,6 @@ This template also  creates the following resources
 - Azure Virtual Machines
 - Availability Set
 - Network Interfaces
-- Power Shell DSC (Desired State Configuration) extension to enact DSC configurations (Add a Windows firewall rule in this template) on all VMs
+- Power Shell DSC (Desired State Configuration) extension to enact DSC configurations (Add a Windows firewall rule in this template) on all Windows based VM
 
 `Availability Set, Azure Virtual Machine, Load Balancer, Azure VM extensions, Power Shell DSC extension`
