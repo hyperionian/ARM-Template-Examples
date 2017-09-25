@@ -131,7 +131,7 @@
       "availabilitySetName": "[concat(parameters('vmNamePrefix'),'avset')]",
       "osDiskName": "[concat('osdisk', uniqueString(resourceGroup().id))]",
       "vmStorageAccountContainerName": "vhds",
-      "vmExtensionName": "dscwindowsfirewall",
+      "vmExtensionName": "dscwithwindowsfirewall",
       "privateIPAllocationMethod": "static"
   },
   "resources": [
