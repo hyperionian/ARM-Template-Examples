@@ -37,7 +37,7 @@
         "dataDiskSize": {
             "type": "int",
             "metadata": {
-                "description": "Size of the VM data disk in GB"
+                "description": "Size of the VM data disk in GB for data store"
             },
             "defaultValue": 2
         },
@@ -74,6 +74,19 @@
         },
         "vmSize": {
             "type": "string",
+            "allowedValues": [
+                "Standard_A2",
+                "Standard_D1_v2",
+                "Standard_D2_v2",
+                "Standard_D3_v2",
+                "Standard_D4_v2",
+                "Standard_D5_v2",
+                "Standard_D11_v2",
+                "Standard_D12_v2",
+                "Standard_D13_v2",
+                "Standard_D14_v2",
+                "Standard_D15_v2"
+            ],
             "metadata": {
                 "description": "The size of the AD VMs Created"
             },
@@ -82,8 +95,9 @@
         
         "adDNicName": {
             "type": "string",
+            "defaultValue": "vmNicPDC",
             "metadata": {
-                "description": "Name of the Nic attached to the ad VM"
+                "description": "Name of the Nic attached to the AD PDC VM"
             }
         },
         "vnetName": {
@@ -123,13 +137,14 @@
         "vmvhdContainerName": "vhds",
         "vnetID": "[resourceId(resourceGroup().name, 'Microsoft.Networks/virtualNetworks' ,parameters('vnetName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]",
+        "storageAccountName": "[concat(parameters('storageAccount'), uniquestring(resourceGroup().id))]",
         "adVmDeploymentId": "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
         "adPDCModulesURL": "[concat(parameters('assetLocation'),'/CreateADPDC.ps1.zip')]",
         "adPDCConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC"
     },
     "resources": [
         {
-            "name": "[concat(parameters('storageAccount'), uniquestring(resourceGroup().id))]",
+            "name": "[variables('storageAccountName')]",
             "type": "Microsoft.Storage/storageAccounts",
             "location": "[resourceGroup().location]",
             "apiVersion": "2015-06-15",
