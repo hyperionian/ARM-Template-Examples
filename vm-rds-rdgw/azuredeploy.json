@@ -72,7 +72,7 @@
   },
   "variables": {
     "storageAccountType": "Standard_LRS",
-    "uniqueStorageAccountContainerName": "[toLower(concat('vhdsrdgw', resourceGroup().name))]",
+    "uniqueStorageAccountContainerName": "vhdsrdgw",
     "imagePublisher": "MicrosoftWindowsServer",
     "imageOffer": "WindowsServer",
     "subnet-id": "[concat(resourceId('Microsoft.Network/virtualNetworks',parameters('vnetName')),'/subnets/',parameters('SubnetName'))]",
@@ -269,7 +269,7 @@
           "osDisk": {
             "name": "osdisk",
             "vhd": {
-              "uri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName')),providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).primaryEndpoints.blob,variables('uniqueStorageAccountContainerName'),'/','gw-vm-os-disk.vhd')]"
+              "uri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName')),providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).primaryEndpoints.blob,variables('uniqueStorageAccountContainerName'),'/','rdgw-os-disk.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
