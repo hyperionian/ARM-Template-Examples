@@ -1,0 +1,137 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "windowsImagePublisher": {
+            "type": "string",
+            "metadata": {
+                "description": "The Publisher of Windows Image"
+            },
+            "defaultValue": "MicrosoftWindowsServer"
+        },
+        "windowsImageOffer": {
+            "type": "string",
+            "metadata": {
+                "description": "The offer of Windows Image"
+            },
+            "defaultValue": "WindowsServer"
+        },
+        "windowsImageSKU": {
+            "type": "string",
+            "allowedValues": [
+                "2012-R2-Datacenter",
+                "2016-Datacenter"
+            ],
+            "metadata": {
+                "description": "The SKU Name of Windows Image"
+            },
+            "defaultValue": "2016-Datacenter"
+        },
+        "windowsImageVersion": {
+            "type": "string",
+            "metadata": {
+                "description": "The Version of Windows Image"
+            },
+            "defaultValue": "latest"
+        },
+        "dataDiskSize": {
+            "type": "int",
+            "metadata": {
+                "description": "Size of the VM data disk in GB"
+            },
+            "defaultValue": 2
+        },
+        "vmName": {
+            "type": "string",
+            "metadata": {
+                "description": "The VM Name"
+            }
+        },
+        "storageAccount": {
+            "type": "string",
+            "metadata": {
+                "description": "The Storage Account Name"
+            }
+        },
+        "storageAccountType": {
+            "type": "string",
+            "metadata": {
+                "description": "The type of the Storage Account created"
+            },
+            "defaultValue": "Standard_LRS"
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Administrator of the new VMs and Domain"
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password for the Administrator account of the new VMs and Domain"
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "metadata": {
+                "description": "The size of the AD VMs Created"
+            },
+			"defaultValue": "Standard_A2"
+        },
+        "subnetResourceID": {
+            "type": "string",
+            "metadata": {
+                "description": "the resource id of the subnet"
+            }
+        },
+        "adRDPNATRuleID": {
+            "type": "string",
+            "metadata": {
+                "description": "the resource id of the RDP NAT rule"
+            }
+        },
+        "adDNicName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Nic attached to the ad VM"
+            }
+        },
+        "vnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "VNET name"
+            }
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Subnet Name where the Active Directory server is deployed onto"
+            }
+        },
+        "primaryAdIpAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "PrimaryIPAddress if AD VM"
+            }
+        },
+        "primaryADName": {
+            "type": "string",
+            "metadata": {
+                "description": "The VM name of Primary AD"
+            }
+        },
+        "domainName": {
+            "type": "string",
+            "metadata": {
+                "description": "The domain name"
+            }
+        },
+        
+        "assetLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The location of resources that the script is dependent on such as linked templates and DSC modules"
+            }
+        }
+    }
