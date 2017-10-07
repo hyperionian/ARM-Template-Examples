@@ -104,12 +104,6 @@
                 "description": "PrimaryIPAddress if AD VM"
             }
         },
-        "primaryADName": {
-            "type": "string",
-            "metadata": {
-                "description": "The VM name of Primary AD"
-            }
-        },
         "domainName": {
             "type": "string",
             "metadata": {
@@ -119,6 +113,7 @@
         
         "assetLocation": {
             "type": "string",
+            "defaultValue": "https://github.com/hyperionian/ARM-Templates/raw/master/vm-ad-dc",
             "metadata": {
                 "description": "The location of resources that the script is dependent on such as linked templates and DSC modules"
             }
