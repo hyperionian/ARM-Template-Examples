@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "domainName": {
+        "Value": "run.local"
+      },
+      "vnetName": {
+        
+        "Value": ""
+      },
+      "SubnetName": {
+        
+        "Value": ""
+      },
+      "adminUsername": {
+       
+        "Value": ""
+      },
+      "adminPassword": {
+        
+        "Value": ""
+      },
+      "imageSKU": {
+        "Value": "2016-Datacenter"
+      },
+      "LBFEIP": {
+          
+          "Value": "10.1.0.16"
+        },
+    "dnsServerPrivateIp": {
+            
+            "Value": "10.1.0.9"
+        }
+    }
+}

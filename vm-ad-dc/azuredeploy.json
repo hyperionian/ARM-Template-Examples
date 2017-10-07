@@ -101,7 +101,7 @@
         "primaryAdIpAddress": {
             "type": "string",
             "metadata": {
-                "description": "PrimaryIPAddress if AD VM"
+                "description": "PrimaryIPAddress of AD VM"
             }
         },
         "domainName": {
@@ -129,7 +129,7 @@
     },
     "resources": [
         {
-            "name": "[parameters('storageAccount')]",
+            "name": "[concat(parameters('storageAccount'), uniquestring(resourceGroup().id))]",
             "type": "Microsoft.Storage/storageAccounts",
             "location": "[resourceGroup().location]",
             "apiVersion": "2015-06-15",

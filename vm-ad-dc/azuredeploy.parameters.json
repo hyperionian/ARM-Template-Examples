@@ -3,135 +3,74 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "windowsImagePublisher": {
-            "type": "string",
-            "metadata": {
-                "description": "The Publisher of Windows Image"
-            },
-            "defaultValue": "MicrosoftWindowsServer"
+            "value": "MicrosoftWindowsServer"
         },
         "windowsImageOffer": {
-            "type": "string",
-            "metadata": {
-                "description": "The offer of Windows Image"
-            },
-            "defaultValue": "WindowsServer"
+            "Value": "WindowsServer"
         },
         "windowsImageSKU": {
-            "type": "string",
-            "allowedValues": [
-                "2012-R2-Datacenter",
-                "2016-Datacenter"
-            ],
-            "metadata": {
-                "description": "The SKU Name of Windows Image"
-            },
-            "defaultValue": "2016-Datacenter"
+            "value": "2016-Datacenter"
         },
         "windowsImageVersion": {
-            "type": "string",
-            "metadata": {
-                "description": "The Version of Windows Image"
-            },
-            "defaultValue": "latest"
+         
+            "value": "latest"
         },
         "dataDiskSize": {
-            "type": "int",
-            "metadata": {
-                "description": "Size of the VM data disk in GB"
-            },
-            "defaultValue": 2
+           
+            "value": 2
         },
         "vmName": {
-            "type": "string",
-            "metadata": {
-                "description": "The VM Name"
-            }
+            "value": ""
+            
         },
         "storageAccount": {
-            "type": "string",
-            "metadata": {
-                "description": "The Storage Account Name"
-            }
+            "value": ""
+            
         },
         "storageAccountType": {
-            "type": "string",
-            "metadata": {
-                "description": "The type of the Storage Account created"
-            },
-            "defaultValue": "Standard_LRS"
+            
+            "Value": "Standard_LRS"
         },
         "adminUsername": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the Administrator of the new VMs and Domain"
-            }
+            "value": ""
+            
         },
         "adminPassword": {
-            "type": "securestring",
-            "metadata": {
-                "description": "The password for the Administrator account of the new VMs and Domain"
-            }
+            "value": "Gen-unique-password"
+           
         },
         "vmSize": {
-            "type": "string",
-            "metadata": {
-                "description": "The size of the AD VMs Created"
-            },
-			"defaultValue": "Standard_A2"
-        },
-        "subnetResourceID": {
-            "type": "string",
-            "metadata": {
-                "description": "the resource id of the subnet"
-            }
-        },
-        "adRDPNATRuleID": {
-            "type": "string",
-            "metadata": {
-                "description": "the resource id of the RDP NAT rule"
-            }
+            
+			"Value": "Standard_A2"
         },
         "adDNicName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of the Nic attached to the ad VM"
-            }
+            "value": ""
+          
         },
         "vnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "VNET name"
-            }
+            "value": ""
+          
         },
         "subnetName": {
-            "type": "string",
-            "metadata": {
-                "description": "Subnet Name where the Active Directory server is deployed onto"
-            }
+            "value": ""
+          
         },
         "primaryAdIpAddress": {
-            "type": "string",
-            "metadata": {
-                "description": "PrimaryIPAddress if AD VM"
-            }
+            "value": ""
+           
         },
         "primaryADName": {
-            "type": "string",
-            "metadata": {
-                "description": "The VM name of Primary AD"
-            }
+            "value": ""
+           
         },
         "domainName": {
-            "type": "string",
-            "metadata": {
-                "description": "The domain name"
-            }
+            "value": ""
+          
         },
         
         "assetLocation": {
-            "type": "string",
-            "metadata": {
-                "description": "The location of resources that the script is dependent on such as linked templates and DSC modules"
-            }
+            "value": ""
+            
         }
     }
+}
