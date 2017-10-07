@@ -146,6 +146,7 @@
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]",
         "storageAccountName": "[concat(parameters('storageAccount'), uniquestring(resourceGroup().id))]",
         "adVmDeploymentId": "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+        "addscDeploymentId": "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),'/extensions', /InstallDomainController')]",
         "adPDCModulesURL": "[concat(parameters('assetLocation'),'/CreateADPDC.ps1.zip')]",
         "adPDCConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
         "rdgwdeployment": "RDGWDeployment",
@@ -274,7 +275,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-02-01",
             "dependsOn": [
-                "[variables('adVmDeploymentID')]"
+                "[variables('addscDeploymentId')]"
             ],
             "properties": {
                 "mode": "Incremental",
