@@ -79,18 +79,7 @@
             },
 			"defaultValue": "Standard_A2"
         },
-        "subnetResourceID": {
-            "type": "string",
-            "metadata": {
-                "description": "the resource id of the subnet"
-            }
-        },
-        "adRDPNATRuleID": {
-            "type": "string",
-            "metadata": {
-                "description": "the resource id of the RDP NAT rule"
-            }
-        },
+        
         "adDNicName": {
             "type": "string",
             "metadata": {
@@ -230,7 +219,7 @@
             }
         },
         {
-            "name": "[concat(parameters('primaryADName'),'/InstallDomainController')]",
+            "name": "[concat(parameters('vmName'),'/InstallDomainController')]",
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "location": "[resourceGroup().location]",
             "apiVersion": "2015-06-15",
