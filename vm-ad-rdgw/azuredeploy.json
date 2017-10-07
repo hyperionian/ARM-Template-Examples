@@ -1,0 +1,325 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "windowsImagePublisher": {
+            "type": "string",
+            "metadata": {
+                "description": "The Publisher of Windows Image"
+            },
+            "defaultValue": "MicrosoftWindowsServer"
+        },
+        "windowsImageOffer": {
+            "type": "string",
+            "metadata": {
+                "description": "The offer of Windows Image"
+            },
+            "defaultValue": "WindowsServer"
+        },
+        "windowsImageSKU": {
+            "type": "string",
+            "allowedValues": [
+                "2012-R2-Datacenter",
+                "2016-Datacenter"
+            ],
+            "metadata": {
+                "description": "The SKU Name of Windows Image"
+            },
+            "defaultValue": "2016-Datacenter"
+        },
+        "windowsImageVersion": {
+            "type": "string",
+            "metadata": {
+                "description": "The Version of Windows Image"
+            },
+            "defaultValue": "latest"
+        },
+        "dataDiskSize": {
+            "type": "int",
+            "metadata": {
+                "description": "Size of the VM data disk in GB for data store"
+            },
+            "defaultValue": 2
+        },
+        "vmName": {
+            "type": "string",
+            "metadata": {
+                "description": "The VM Name"
+            }
+        },
+        "storageAccount": {
+            "type": "string",
+            "metadata": {
+                "description": "The Storage Account Name"
+            }
+        },
+        "storageAccountType": {
+            "type": "string",
+            "metadata": {
+                "description": "The type of the Storage Account created"
+            },
+            "defaultValue": "Standard_LRS"
+        },
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Administrator of the new VMs and Domain"
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The password for the Administrator account of the new VMs and Domain"
+            }
+        },
+        "vmSize": {
+            "type": "string",
+            "allowedValues": [
+                "Standard_A2",
+                "Standard_D1_v2",
+                "Standard_D2_v2",
+                "Standard_D3_v2",
+                "Standard_D4_v2",
+                "Standard_D5_v2",
+                "Standard_D11_v2",
+                "Standard_D12_v2",
+                "Standard_D13_v2",
+                "Standard_D14_v2",
+                "Standard_D15_v2"
+            ],
+            "metadata": {
+                "description": "The size of the AD VMs Created"
+            },
+			"defaultValue": "Standard_A2"
+        },
+        
+        "adDNicName": {
+            "type": "string",
+            "defaultValue": "vmNicPDC",
+            "metadata": {
+                "description": "Name of the Nic attached to the AD PDC VM"
+            }
+        },
+        "vnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "VNET name"
+            }
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Subnet Name where the Active Directory server is deployed onto"
+            }
+        },
+        "primaryAdIpAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "PrimaryIPAddress of AD VM"
+            }
+        },
+        "LBFEIP": {
+            "type": "string",
+            "metadata": {
+                "description": "RD GW Load Balancer Front End IP"
+            }
+        },
+
+        "domainName": {
+            "type": "string",
+            "metadata": {
+                "description": "The domain name"
+            }
+        },
+        
+        "assetLocation": {
+            "type": "string",
+            "defaultValue": "https://github.com/hyperionian/ARM-Templates/raw/master/vm-ad-rdgw",
+            "metadata": {
+                "description": "The location of resources that the script is dependent on such as linked templates and DSC modules"
+            }
+        }
+    },
+    "variables": {
+        "vmvhdContainerName": "vhds",
+        "vnetID": "[resourceId(resourceGroup().name, 'Microsoft.Networks/virtualNetworks' ,parameters('vnetName'))]",
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]",
+        "storageAccountName": "[concat(parameters('storageAccount'), uniquestring(resourceGroup().id))]",
+        "adVmDeploymentId": "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+        "adPDCModulesURL": "[concat(parameters('assetLocation'),'/CreateADPDC.ps1.zip')]",
+        "adPDCConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
+        "rdgwdeployment": "RDGWDeployment",
+        "rdgwtemplateURL": "https://raw.githubusercontent.com/hyperionian/ARM-Templates/master/vm-rds-rdgw/azuredeploy.json"
+       
+    },
+    "resources": [
+        {
+            "name": "[variables('storageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "properties": {
+                "accountType": "[parameters('storageAccountType')]"
+            }
+        },
+        {
+            "name": "[parameters('adDNicName')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-05-01-preview",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[parameters('primaryAdIpAddress')]",
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                           
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('vmName')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts',parameters('storageAccount'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces',parameters('adDNicName'))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[parameters('vmSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('vmName')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[parameters('windowsImagePublisher')]",
+                        "offer": "[parameters('windowsImageOffer')]",
+                        "sku": "[parameters('windowsImageSKU')]",
+                        "version": "[parameters('windowsImageVersion')]"
+                    },
+                    "osDisk": {
+                        "name": "osdisk",
+                        "vhd": {
+                            "uri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('storageAccount')),providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).primaryEndpoints.blob ,variables('vmvhdContainerName'),'/', parameters('vmName'), '0','-osdisk.vhd')]"
+                        },
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    },
+                    "dataDisks": [
+                        {
+                            "vhd": {
+                                "uri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('storageAccount')),providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).primaryEndpoints.blob ,variables('vmvhdContainerName'),'/', parameters('vmName'), '0','data-1.vhd')]"
+                            },
+                            "name": "[concat(parameters('vmName'), '0','-data-disk1')]",
+                            "createOption": "Empty",
+                            "caching": "None",
+                            "diskSizeGB": "[parameters('dataDiskSize')]",
+                            "lun": 0
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('adDNicName'))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "[concat(parameters('vmName'),'/InstallDomainController')]",
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2015-06-15",
+            "dependsOn": [
+                "[variables('adVmDeploymentID')]"
+              ],
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.8",
+                "autoUpgradeMinorVersion": "true",
+                "settings": {
+                    "modulesUrl": "[variables('adPDCModulesURL')]",
+                    "configurationFunction": "[variables('adPDCConfigurationFunction')]",
+                    "properties": {
+                        "domainName": "[parameters('domainName')]",
+                        "adminCreds": {
+                            "userName": "[parameters('adminUserName')]",
+                            "password": "PrivateSettingsRef:adminPassword"
+                        }
+                    }
+                },
+                "protectedSettings": {
+                    "items": {
+                        "adminPassword": "[parameters('adminPassword')]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "[variables('rdgwdeployment')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-02-01",
+            "dependsOn": [
+                "[variables('adVmDeploymentID')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                  "uri": "[variables('rdgwtemplateURL')]",
+                  "contentVersion": "1.0.0.0"
+                },
+              "parameters": {
+                "domainName": {
+                  "Value": "[parameters('domainName')]"
+                },
+                "vnetName": {
+                  
+                  "Value": "[parameters('vnetName')]"
+                },
+                "SubnetName": {
+                  
+                  "Value": "[parameters('SubnetName')]"
+                },
+                "adminUsername": {
+                 
+                  "Value": "[parameters('adminUsername')]"
+                },
+                "adminPassword": {
+                  
+                  "Value": "[parameters('adminPassword')]"
+                },
+                "imageSKU": {
+                  "Value": "[parameters('windowsImageSKU')]"
+                },
+                "LBFEIP": {
+                    
+                    "Value": "[parameters('LBFEIP')]"
+                  },
+               "dnsServerPrivateIp": {
+                      
+                      "Value": "[parameters('primaryAdIpAddress')]"
+                  },
+                  "storageAccountName": {
+                      "value": "[variables('storageAccountName')]"
+                  }
+              }
+            }
+        }
+          
+    ],
+    "outputs": { }
+}
