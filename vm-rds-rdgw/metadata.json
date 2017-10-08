@@ -1,0 +1,7 @@
+{
+    "itemDisplayName": "Azure Windows VM with PowerShell DSC extensions for deploying Windows Remote Desktop Gateway role"  ,
+    "description": "This template provisions a single instance of Windows 2016 virtual machine pre-existing Azure Resource Group, Azure Virtual Network, and subnet. It also installs Powershell DSC extension for joining to existing AD domain and deploying Windows Remote Desktop Gateway role",
+    "summary": "Azure VM running Windows as Remote Desktop Gateway role joined into existing AD domain",
+    "githubUsername": "hyperionian",
+    "dateUpdated": "2017-10-07"
+}
