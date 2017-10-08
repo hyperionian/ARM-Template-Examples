@@ -1,0 +1,7 @@
+{
+    "itemDisplayName": "Azure Windows VMs with PowerShell DSC for deploying AD domain controller on first VM and Remote Desktop Gateway role on second VM"  ,
+    "description": "This template provisions a single instance of Windows 2016 virtual machine pre-existing Azure Resource Group, Azure Virtual Network, and subnet. It also installs Powershell DSC extension for configuring AD domain controller. The template also  provisions second Azure VM, joins it to existing AD domain, and installs Remote Desktop Gateway role",
+    "summary": "Azure VM running Windows Server 2016 as AD domain controller and second VM installed with Remote Desktop Gateway role",
+    "githubUsername": "hyperionian",
+    "dateUpdated": "2017-10-07"
+}

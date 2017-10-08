@@ -145,15 +145,15 @@
         "vnetID": "[resourceId(resourceGroup().name, 'Microsoft.Networks/virtualNetworks' ,parameters('vnetName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]",
         "storageAccountName": "[concat(parameters('storageAccount'), uniquestring(resourceGroup().id))]",
-        "adVmDeploymentId": "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-        "addscDeploymentId": "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'),'/extensions', '/InstallDomainController')]",
+        "adVmDeploymentId": "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]",
+        "addscDeploymentId": "[concat(variables('adVmDeploymentId'), '/extensions' , '/InstallDomainController') ]",
         "adPDCModulesURL": "[concat(parameters('assetLocation'),'/CreateADPDC.ps1.zip')]",
         "adPDCConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
         "rdgwdeployment": "RDGWDeployment",
         "rdgwtemplateURL": "https://raw.githubusercontent.com/hyperionian/ARM-Templates/master/vm-rds-rdgw/azuredeploy.json"
        
     },
-    "resources": [
+    "resources": [  
         {
             "name": "[variables('storageAccountName')]",
             "type": "Microsoft.Storage/storageAccounts",

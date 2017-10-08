@@ -1,0 +1,7 @@
+{
+    "itemDisplayName": "Azure Windows VM with PowerShell DSC extensions for setting up AD DC"  ,
+    "description": "This template provisions a single instance of Windows 2016 virtual machine pre-existing Azure Resource Group, Azure Virtual Network, and subnet. It also installs Powershell DSC extension for configuring up AD Domain Controller",
+    "summary": "Azure VM running Windows as Domain Controller configured through PowerShell DSC",
+    "githubUsername": "hyperionian",
+    "dateUpdated": "2017-10-07"
+}
