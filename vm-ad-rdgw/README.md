@@ -25,4 +25,4 @@ This template also  creates the following resources
 - A second Virtual Machine referred in linked template as Remote Desktop Gateway/Web role joined to AD domain setup in the master template
 
 
-`Availability Set, Azure Virtual Machine, Load Balancer, Azure VM extensions, Power Shell DSC extension, Remote Desktop Gateway/Web`
+`Availability Set, Azure Virtual Machine, Load Balancer, Azure VM extensions, Power Shell DSC extension, Remote Desktop Gateway/Web`git
