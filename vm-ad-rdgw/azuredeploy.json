@@ -136,7 +136,7 @@
             "type": "string",
             "defaultValue": "https://github.com/hyperionian/ARM-Templates/raw/master/vm-ad-rdgw",
             "metadata": {
-                "description": "The location of resources that the script is dependent on such as linked templates or DSC modules"
+                "description": "The location of resources that the template is dependent on such as linked templates or DSC modules"
             }
         }
     },
