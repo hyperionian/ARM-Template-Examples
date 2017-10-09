@@ -1,5 +1,5 @@
 {
-    "itemDisplayName": "Azure VMs with Availability Sets and Load Balancers",
+    "itemDisplayName": "Azure VMs with Availability Sets and Load Balancer",
     "description": "This template provisions multiple instances of virtual machines with Windows Server 2016 Core or Red Hat Linux within an Avaialbility Set using customer managed disk in existing Azure Resource Group, Azure Virtual Network, and subnet. It also creates an Internal Load Balancer to load balance the network traffic to Virtual Machines",
     "summary": "Azure VM with Avaialbility Sets and Windows PowerShell DSC for networking for Windows Server VM",
     "githubUsername": "hyperionian",
