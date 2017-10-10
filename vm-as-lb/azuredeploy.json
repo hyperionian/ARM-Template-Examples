@@ -20,6 +20,34 @@
               "description": "VM name prefix"
           }
       },
+      "networkInterfaceType": {
+        "defaultValue": "Private",
+        "allowedValues": [
+            "Public",
+            "Private"
+        ],
+        "type": "string",
+        "metadata": {
+            "description": "Network Interface Type for Load Balancer front end"
+        }
+    },
+      "dnsLabelPrefix": {
+        "type": "string",
+        "metadata": {
+            "description": "Public IP DNS name"
+        }
+    },
+    "IPAllocationMethod": {
+        "defaultValue": "Dynamic",
+        "allowedValues": [
+            "Static",
+            "Dynamic"
+        ],
+        "type": "string",
+        "metadata": {
+            "description": "Public IP allocation method"
+        }
+    },
       "LBName": {
           "type": "string",
           "metadata": {
@@ -132,7 +160,8 @@
       "osDiskName": "[concat('osdisk', uniqueString(resourceGroup().id))]",
       "vmStorageAccountContainerName": "vhds",
       "vmExtensionName": "dscwithwindowsfirewall",
-      "privateIPAllocationMethod": "static"
+      "publicIPaddressName": "[concat(parameters('vmNamePrefix'), 'pip')]",
+      "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
   },
   "resources": [
       {
@@ -155,6 +184,19 @@
               "platformFaultDomainCount": "1",
               "platformUpdateDomainCount": "2"
           }
+      },
+      {
+        "apiVersion": "2016-03-30",
+        "type": "Microsoft.Network/publicIPAddresses",
+        "condition": "[equals(parameters('networkInterfaceType'),'Public')]",
+        "name": "[variables('publicIPAddressName')]",
+        "location": "[resourceGroup().location]",
+        "properties": {
+          "publicIPAllocationMethod": "[parameters('IPAllocationMethod')]",
+          "dnsSettings": {
+            "domainNameLabel": "[parameters('dnsLabelPrefix')]"
+          }
+        }
       },
       {
           "type": "Microsoft.Network/networkInterfaces",
@@ -187,17 +229,19 @@
               "[concat('Microsoft.Network/loadBalancers/', parameters('lbName'))]"
           ]
       },
+     
       {
           "type": "Microsoft.Network/loadBalancers",
           "name": "[parameters('lbName')]",
           "apiVersion": "2017-09-01",
+          "condition": "[equals(parameters('networkInterfaceType'),'Private')]",
           "location": "[resourceGroup().location]",
           "properties": {
               "frontendIPConfigurations": [
                   {
                       "name": "LoadBalancerFrontend",
                       "properties": {
-                          "privateIPAllocationMethod": "[variables('privateIPAllocationMethod')]",
+                          "privateIPAllocationMethod": "Static",
                           "privateIPAddress": "[parameters('LBFrontEndIP')]",
                           "subnet": {
                               "id": "[variables('subnetRef')]"
@@ -212,13 +256,13 @@
               ],
               "loadBalancingRules": [
                   {
-                      "name": "[concat(parameters('lbName'),'ProxyRule')]",
+                      "name": "[concat(parameters('lbName'),parameters('vmNamePrefix'))]",
                       "properties": {
                           "frontendIPConfiguration": {
                               "id": "[variables('frontEndIPConfigID')]"
                           },
-                          "frontendPort": 8080,
-                          "backendPort": 8080,
+                          "frontendPort": 443,
+                          "backendPort": 443,
                           "enableFloatingIP": false,
                           "idleTimeoutInMinutes": 4,
                           "protocol": "Tcp",
@@ -237,7 +281,7 @@
                       "name": "ProxyProbe",
                       "properties": {
                           "protocol": "Http",
-                          "port": 8080,
+                          "port": 443,
                           "requestPath": "/",
                           "intervalInSeconds": 5,
                           "numberOfProbes": 2
@@ -246,6 +290,66 @@
               ]
           }
       },
+      {
+        "type": "Microsoft.Network/loadBalancers",
+        "name": "[parameters('lbName')]",
+        "apiVersion": "2017-09-01",
+        "condition": "[equals(parameters('networkInterfaceType'),'Public')]",
+        "location": "[resourceGroup().location]",
+        "properties": {
+            "frontendIPConfigurations": [
+                {
+                    "name": "LoadBalancerFrontend",
+                    "properties": {
+                        
+                        "publicIPAddress": {
+                            "id": "[variables('publicIPAddressID')]"
+                        }
+                       
+                    }
+                }
+            ],
+            "backendAddressPools": [
+                {
+                    "name": "LoadBalancerBackend"
+                }
+            ],
+            "loadBalancingRules": [
+                {
+                    "name": "[concat(parameters('lbName'),parameters('vmNamePrefix'))]",
+                    "properties": {
+                        "frontendIPConfiguration": {
+                            "id": "[variables('frontEndIPConfigID')]"
+                        },
+                        "frontendPort": 443,
+                        "backendPort": 443,
+                        "enableFloatingIP": false,
+                        "idleTimeoutInMinutes": 4,
+                        "protocol": "Tcp",
+                        "loadDistribution": "Default",
+                        "backendAddressPool": {
+                            "id": "[concat(variables('lbID'), '/backendAddressPools/LoadBalancerBackend')]"
+                        },
+                        "probe": {
+                            "id": "[concat(variables('lbID'), '/probes/LBProbe')]"
+                        }
+                    }
+                }
+            ],
+            "probes": [
+                {
+                    "name": "LBProbe",
+                    "properties": {
+                        "protocol": "Http",
+                        "port": 443,
+                        "requestPath": "/",
+                        "intervalInSeconds": 5,
+                        "numberOfProbes": 2
+                    }
+                }
+            ]
+        }
+    },
       {
           "type": "Microsoft.Compute/virtualMachines",
           "name": "[concat(parameters('vmNamePrefix'), copyindex())]",
