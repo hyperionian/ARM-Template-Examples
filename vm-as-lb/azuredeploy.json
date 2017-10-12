@@ -34,7 +34,7 @@
       "dnsLabelPrefix": {
         "type": "string",
         "metadata": {
-            "description": "Public IP DNS name"
+            "description": "DNS name for Load Balancer public front end"
         }
     },
     "IPAllocationMethod": {
@@ -52,13 +52,6 @@
           "type": "string",
           "metadata": {
               "description": "Load Balancer name"
-          }
-      },
-      "nicNamePrefix": {
-          "defaultValue": "nic",
-          "type": "string",
-          "metadata": {
-              "description": "Network Interface Name Prefix"
           }
       },
       "vnetName": {
@@ -200,9 +193,10 @@
       },
       {
           "type": "Microsoft.Network/networkInterfaces",
-          "name": "[concat(parameters('nicNamePrefix'), copyindex())]",
+          "name": "[concat(parameters('vmNamePrefix'), '-nic',copyindex())]",
           "apiVersion": "2017-09-01",
           "location": "[resourceGroup().location]",
+          "condition": "[equals(parameters('networkInterfaceType'),'Private')]",
           "copy": {
               "name": "nicLoop",
               "count": "[parameters('numberOfInstances')]"
@@ -226,13 +220,46 @@
               ]
           },
           "dependsOn": [
-              "[concat('Microsoft.Network/loadBalancers/', parameters('lbName'))]"
+              "[concat('Microsoft.Network/loadBalancers/', 'internal',parameters('lbName'))]"
           ]
       },
+      {
+        "type": "Microsoft.Network/networkInterfaces",
+        "name": "[concat(parameters('vmNamePrefix'), '-nic',copyindex())]",
+        "apiVersion": "2017-09-01",
+        "location": "[resourceGroup().location]",
+        "condition": "[equals(parameters('networkInterfaceType'),'Public')]",
+        "copy": {
+            "name": "nicLoop",
+            "count": "[parameters('numberOfInstances')]"
+        },
+        "properties": {
+            "ipConfigurations": [
+                {
+                    "name": "ipconfig1",
+                    "properties": {
+                        "privateIPAllocationMethod": "Dynamic",
+                        "subnet": {
+                            "id": "[variables('subnetRef')]"
+                        },
+                        "loadBalancerBackendAddressPools": [
+                            {
+                                "id": "[concat(variables('lbID'), '/backendAddressPools/LoadBalancerBackend')]"
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "dependsOn": [
+            "[concat('Microsoft.Network/loadBalancers/',parameters('lbName'))]"
+        ]
+    },
+   
      
       {
           "type": "Microsoft.Network/loadBalancers",
-          "name": "[parameters('lbName')]",
+          "name": "[concat('internal',parameters('lbName'))]",
           "apiVersion": "2017-09-01",
           "condition": "[equals(parameters('networkInterfaceType'),'Private')]",
           "location": "[resourceGroup().location]",
@@ -256,7 +283,7 @@
               ],
               "loadBalancingRules": [
                   {
-                      "name": "[concat(parameters('lbName'),parameters('vmNamePrefix'))]",
+                      "name": "[concat(parameters('lbName'),'-', parameters('vmNamePrefix'))]",
                       "properties": {
                           "frontendIPConfiguration": {
                               "id": "[variables('frontEndIPConfigID')]"
@@ -296,6 +323,9 @@
         "apiVersion": "2017-09-01",
         "condition": "[equals(parameters('networkInterfaceType'),'Public')]",
         "location": "[resourceGroup().location]",
+        "dependsOn": [
+            "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
+          ],
         "properties": {
             "frontendIPConfigurations": [
                 {
@@ -316,7 +346,7 @@
             ],
             "loadBalancingRules": [
                 {
-                    "name": "[concat(parameters('lbName'),parameters('vmNamePrefix'))]",
+                    "name": "[concat(parameters('lbName'),'-', parameters('vmNamePrefix'))]",
                     "properties": {
                         "frontendIPConfiguration": {
                             "id": "[variables('frontEndIPConfigID')]"
@@ -390,7 +420,7 @@
               "networkProfile": {
                   "networkInterfaces": [
                       {
-                          "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('nicNamePrefix'),copyindex()))]"
+                          "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('vmNamePrefix'),'-nic',copyindex()))]"
                       }
                   ]
               },
@@ -428,7 +458,7 @@
           ],
           "dependsOn": [
               "[concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))]",
-              "[concat('Microsoft.Network/networkInterfaces/', parameters('nicNamePrefix'), copyindex())]",
+              "[concat('Microsoft.Network/networkInterfaces/', parameters('vmNamePrefix'),'-nic', copyindex())]",
               "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
           ]
       }
