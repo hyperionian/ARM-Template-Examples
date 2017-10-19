@@ -1,0 +1,106 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sqlServerName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the primary SQL Server."
+            }
+        },
+        "sqlServerAdminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "The administrator username of the primary SQL Server."
+            }
+        },
+        "sqlServerAdminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The administrator password of the primary SQL Server."
+            }
+        },
+        "startIPAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "IP Address of the Apps"
+            }
+        },
+        "endIPAddress": {
+            "type": "string",
+            "metadata": {
+                "description": "IP Address of the Apps. This can be the same as startIPAddress if there is only a single IP to allow"
+            }
+        }
+       
+    },
+    "variables": {
+        "sqlDatabaseName": "MyData",
+        "sqlDatabaseServiceObjective": "Basic",
+        "sqlDatabaseEdition": "Basic"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Sql/servers",
+            "kind": "v12.0",
+            "name": "[parameters('sqlServerName')]",
+            "apiVersion": "2015-05-01-preview",
+            "location": "[resourceGroup().location]",
+            "identity": {
+                "type": "SystemAssigned"
+              },
+            "properties": {
+                "administratorLogin": "[parameters('sqlServerAdminUsername')]",
+                "administratorLoginPassword": "[parameters('sqlServerAdminPassword')]",
+                "version": "12.0"
+            },
+            "resources": [
+                {
+                    "name": "[variables('sqlDatabaseName')]",
+                    "type": "databases",
+                    "apiVersion": "2014-04-01",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[parameters('sqlServerName')]"
+                    ],
+                    "properties": {
+                        "edition": "[variables('sqlDatabaseEdition')]",
+                        "requestedServiceObjectiveName": "[variables('sqlDatabaseServiceObjective')]"
+                    },
+                    "resources": [
+                        {
+                            "name": "current",
+                            "type": "transparentDataEncryption",
+                            "dependsOn": [
+                                "[variables('sqldatabaseName')]"
+                            ],
+                            "location": null,
+                            "apiVersion": "2014-04-01",
+                            "properties": {
+                                "status": "Enabled"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "type": "firewallrules",
+                    "name": "AllowAppsAccess",
+                    "apiVersion": "2014-04-01",
+                    "location": "[resourceGroup().location]",
+                    "properties": {
+                        "endIpAddress": "[parameters('startIpAddress')]",
+                        "startIpAddress": "[parameters('endIpAddress')]"
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', parameters('sqlserverName'))]"
+                    ]
+                }
+                
+                
+            ]
+        }
+    ],
+    "outputs": {
+        
+    }
+}
