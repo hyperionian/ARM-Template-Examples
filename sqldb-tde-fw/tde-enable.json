@@ -1,0 +1,64 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyVaultName": {
+            "type": "string",
+            "metadata": {
+                "description": "Key Vault name"
+            }
+        },
+        "keyName": {
+            "type": "string",
+            "metadata": {
+                "description": "Key Vault Key name"
+            }
+        },
+        "keyVersion": {
+            "type": "string",
+            "metadata": {
+                "description": "Key Vault Key version"
+            }
+        },
+        "sqlServerName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the SQL Server where the TDE protector is enabled"
+            }
+        }
+    },
+    "variables": {
+        
+        "serverKeyName": "[concat(parameters('keyVaultName'), '_', parameters('keyName'), '_', parameters('keyVersion'))]",
+        "keyvaulturi": "[concat('https://', parameters('keyVaultName'), '.vault.azure.net/keys/', parameters('keyName'), '/', parameters('keyVersion'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('sqlServerName'), '/',variables('serverKeyName'))]",
+            "type": "Microsoft.Sql/servers/keys",
+            "apiVersion": "2015-05-01-preview",
+            "properties": {
+                "serverKeyType": "AzureKeyVault",
+                "uri": "[variables('keyvaulturi')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Sql/servers/', parameters('sqlserverName'))]"
+              
+            ]
+        },
+        {
+            "name": "[concat(parameters('sqlServerName'), '/','current')]",
+            "type": "Microsoft.Sql/servers/encryptionProtector",
+            "apiVersion": "2015-05-01-preview",
+            "properties": {
+                "serverKeyName": "[variables('serverKeyName')]",
+                "serverKeyType": "AzureKeyVault"
+            },
+            "dependsOn": [
+            
+                "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'), '/keys/', variables('serverKeyName'))]"
+                
+            ]
+        }
+    ]
+}
