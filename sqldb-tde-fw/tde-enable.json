@@ -42,8 +42,7 @@
                 "uri": "[variables('keyvaulturi')]"
             },
             "dependsOn": [
-                "[concat('Microsoft.Sql/servers/', parameters('sqlserverName'))]"
-              
+                "[parameters('sqlServerName')]"
             ]
         },
         {
@@ -54,8 +53,7 @@
                 "serverKeyName": "[variables('serverKeyName')]",
                 "serverKeyType": "AzureKeyVault"
             },
-            "dependsOn": [
-            
+            "dependsOn": [ 
                 "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'), '/keys/', variables('serverKeyName'))]"
                 
             ]
