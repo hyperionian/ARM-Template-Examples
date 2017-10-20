@@ -15,9 +15,21 @@
             }
         },
         "sqlServerAdminPassword": {
-            "type": "securestring",
+            "type": "string",
             "metadata": {
                 "description": "The administrator password of the primary SQL Server."
+            }
+        },
+        "sqlServerAdAdmin": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Azure AD administrator for Azure SQL DB"
+            }
+        },
+        "sqlServerAdAdminObjectId": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Azure AD administrator Object ID for Azure SQL DB"
             }
         },
         "startIPAddress": {
@@ -37,7 +49,7 @@
             "metadata": {
                 "description": "Tier 2 storage account name for storing database audit events"
             }
-        },
+        }
         
     },
     "variables": {
@@ -100,6 +112,21 @@
                     "dependsOn": [
                         "[concat('Microsoft.Sql/servers/', parameters('sqlserverName'))]"
                     ]
+                },
+                {
+                    "name": "activedirectory",
+                    "type": "administrators",
+                    "location": "[resourceGroup().location]",
+                    "apiVersion": "2014-04-01-preview",
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+                    ],
+                    "properties": {
+                        "administratorType": "ActiveDirectory",
+                        "login": "[parameters('sqlServerAdAdmin')]",
+                        "sid": "[parameters('sqlServerAdAdminObjectId')]",
+                        "tenantId": "[subscription().tenantId]"
+                    }
                 },
                 {
                     "apiVersion": "2015-05-01-preview",
