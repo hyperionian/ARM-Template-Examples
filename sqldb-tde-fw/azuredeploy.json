@@ -31,8 +31,14 @@
             "metadata": {
                 "description": "IP Address of the Apps. This can be the same as startIPAddress if there is only a single IP to allow"
             }
-        }
-       
+        },
+        "storageaccountname": {
+            "type": "string",
+            "metadata": {
+                "description": "Tier 2 storage account name for storing database audit events"
+            }
+        },
+        
     },
     "variables": {
         "sqlDatabaseName": "MyData",
@@ -48,7 +54,7 @@
             "location": "[resourceGroup().location]",
             "identity": {
                 "type": "SystemAssigned"
-              },
+            },
             "properties": {
                 "administratorLogin": "[parameters('sqlServerAdminUsername')]",
                 "administratorLoginPassword": "[parameters('sqlServerAdminPassword')]",
@@ -94,13 +100,44 @@
                     "dependsOn": [
                         "[concat('Microsoft.Sql/servers/', parameters('sqlserverName'))]"
                     ]
+                },
+                {
+                    "apiVersion": "2015-05-01-preview",
+                    "type": "auditingSettings",
+                    "name": "DefaultAuditPolicy",
+                    "dependsOn": [
+                      "[concat('Microsoft.Sql/servers/', parameters('sqlserverName'))]"
+                    ],
+                    "properties": {
+                      "State": "Enabled",
+                      "storageEndpoint": "[concat('https://', parameters ('storageAccountName'), '.blob.core.windows.net/')]",
+                      "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+                      "retentionDays": 0,
+                      "auditActionsAndGroups": null,
+                      "storageAccountSubscriptionId": "[subscription().subscriptionId]",
+                      "isStorageSecondaryKeyInUse": false
+                    }
+                  },
+                {
+                    "apiVersion": "2015-05-01-preview",
+                    "type": "securityAlertPolicies",
+                    "name": "DefaultSecurityAlert",
+                    "dependsOn": [
+                        "[parameters('sqlservername')]",
+                        "[concat('Microsoft.Sql/servers/', parameters('sqlservername'), '/auditingSettings/DefaultAuditPolicy')]"
+                    ],
+                    "properties": {
+                        "state": "Enabled",
+                        "retentionDays": "10",
+                        "emailAccountAdmins": "Disabled",
+                        "emailAddresses": "run@run.com",
+                        "disabledAlerts": "",
+                        "storageEndpoint": "[concat('https://', parameters ('storageAccountName'), '.blob.core.windows.net/')]",
+                        "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+                    }
                 }
-                
-                
             ]
         }
     ],
-    "outputs": {
-        
-    }
+    "outputs": {}
 }
