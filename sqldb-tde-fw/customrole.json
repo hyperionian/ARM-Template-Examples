@@ -1,0 +1,16 @@
+{
+    "Name": "Virtual Network Endpoint Join",
+    "Id": null,
+    "IsCustom": true,
+    "Description": "Can Join Virtual Network Subnet endpoint to Azure SQL or Storage Account",
+    "Actions": [
+      
+      "Microsoft.Network/virtualnetworks/subnets/joinviaServiceEndpoint/action"
+    ],
+    "NotActions": [
+  
+    ],
+    "AssignableScopes": [
+      "/subscriptions/c276fc76-9cd4-44c9-99a7-4fd71546436e"
+    ]
+  }
