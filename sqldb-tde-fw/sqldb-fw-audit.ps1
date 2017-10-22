@@ -1,5 +1,6 @@
 #Login to Azure Subscription as user with write permissions for Azure SQL resources
 Login-AzureRmAccount
+
 # Set the resource group name and location for your server
 $resourcegroupname = "azsqldbt3-rg"
 $vnetsharedresourcegroupname = "azsqldb-rg"
@@ -37,7 +38,8 @@ $notificationemailreceipient = "run@robot.com"
 $server = New-AzureRmSqlServer -ResourceGroupName $resourcegroupname `
     -ServerName $servername `
     -Location $location `
-    -SqlAdministratorCredentials $cred ;
+    -SqlAdministratorCredentials $cred 
+    -AssignIdentity ;
 
 # Create a server firewall rule that allows access from the specified IP range
 $serverfirewallrule = New-AzureRmSqlServerFirewallRule -ResourceGroupName $resourcegroupname `
@@ -58,6 +60,7 @@ Set-AzureRmSqlServerActiveDirectoryAdministrator –ResourceGroupName $resourceg
 
 # Set an auditing policy
 Write-Host "Set Server Level  Auditing";
+
 Set-AzureRmSqlServerAuditing -State Enabled `
     -ResourceGroupName $resourcegroupname `
     -ServerName $servername `
@@ -71,7 +74,6 @@ Set-AzureRmSqlServerThreatDetectionPolicy -ResourceGroupName $resourcegroupname 
     -StorageAccountName $storageaccountname `
     -NotificationRecipientsEmails $notificationemailreceipient `
     -EmailAdmins $False ;
-
 
 
 Write-Host "Add the subnet id as a rule, into the ACLs for your Azure SQL Database server.";
