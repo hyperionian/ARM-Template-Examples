@@ -42,7 +42,7 @@
                 "uri": "[variables('keyvaulturi')]"
             },
             "dependsOn": [
-                "[parameters('sqlServerName')]"
+               
             ]
         },
         {
