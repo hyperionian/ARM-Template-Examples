@@ -15,13 +15,13 @@
             }
         },
         "sqlServerAdminPassword": {
-            "type": "string",
+            "type": "securestring",
             "metadata": {
                 "description": "The administrator password of the primary SQL Server."
             }
         },
         "sqlServerAdAdmin": {
-            "type": "securestring",
+            "type": "string",
             "metadata": {
                 "description": "Azure AD administrator for Azure SQL DB"
             }
@@ -49,13 +49,39 @@
             "metadata": {
                 "description": "Tier 2 storage account name for storing database audit events"
             }
+        },
+        "vnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Virtual Network Name to be allowed to Azure SQL DB"
+            }
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Subnet name to be allowed to Azure SQL DB"
+            }
+        },
+        "networkRGName": {
+            "type": "string",
+            "metadata": {
+                "description": "VNet resource group"
+            }
+        },
+        "storageRGName": {
+            "type": "string",
+            "metadata": {
+                "description": "VNet resource group"
+            }
         }
-        
+
     },
     "variables": {
         "sqlDatabaseName": "MyData",
         "sqlDatabaseServiceObjective": "Basic",
-        "sqlDatabaseEdition": "Basic"
+        "sqlDatabaseEdition": "Basic",
+        "vnetID": "[resourceId(parameters('networkrgName'), 'Microsoft.Networks/virtualNetworks' ,parameters('vnetName'))]",
+        "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]"
     },
     "resources": [
         {
@@ -114,6 +140,17 @@
                     ]
                 },
                 {
+                    "name": "sqlvnetrule",
+                    "type": "virtualNetworkRules",
+                    "apiVersion": "2015-05-01-preview",
+                    "properties": {
+                      "virtualNetworkSubnetId": "[variables('subnetRef')]"
+                    },
+                    "dependsOn": [
+                        "[concat('Microsoft.Sql/servers/', parameters('sqlserverName'))]"
+                    ]
+                  },
+                {
                     "name": "activedirectory",
                     "type": "administrators",
                     "location": "[resourceGroup().location]",
@@ -138,7 +175,7 @@
                     "properties": {
                       "State": "Enabled",
                       "storageEndpoint": "[concat('https://', parameters ('storageAccountName'), '.blob.core.windows.net/')]",
-                      "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
+                      "storageAccountAccessKey": "[listKeys(resourceId(parameters('StorageRGName'), 'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]",
                       "retentionDays": 0,
                       "auditActionsAndGroups": null,
                       "storageAccountSubscriptionId": "[subscription().subscriptionId]",
@@ -160,7 +197,7 @@
                         "emailAddresses": "run@run.com",
                         "disabledAlerts": "",
                         "storageEndpoint": "[concat('https://', parameters ('storageAccountName'), '.blob.core.windows.net/')]",
-                        "storageAccountAccessKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+                        "storageAccountAccessKey": "[listKeys(resourceId(parameters('StorageRGName'),'Microsoft.Storage/storageAccounts', parameters('storageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
                     }
                 }
             ]
