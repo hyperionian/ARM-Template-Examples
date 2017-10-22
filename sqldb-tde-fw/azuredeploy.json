@@ -65,13 +65,13 @@
         "networkRGName": {
             "type": "string",
             "metadata": {
-                "description": "VNet resource group"
+                "description": "Resource Group name of the Virtual Network Subnet with Microsoft.Sql service endpoint"
             }
         },
         "storageRGName": {
             "type": "string",
             "metadata": {
-                "description": "VNet resource group"
+                "description": "Resource Group name of the Storage Account for SQL DB auditing"
             }
         }
 
