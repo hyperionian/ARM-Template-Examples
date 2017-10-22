@@ -23,7 +23,7 @@
         "sqlServerName": {
             "type": "string",
             "metadata": {
-                "description": "The name of the SQL Server where the TDE protector is enabled"
+                "description": "The name of the SQL Server on where the TDE protector is enabled"
             }
         }
     },
