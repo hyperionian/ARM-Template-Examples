@@ -1,5 +1,5 @@
 {
-    "Name": "Virtual Network Endpoint Join",
+    "Name": "Virtual Service Endpoint Subnet Join",
     "Id": null,
     "IsCustom": true,
     "Description": "Can Join Virtual Network Subnet endpoint to Azure SQL or Storage Account",
