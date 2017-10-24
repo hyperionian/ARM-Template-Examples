@@ -73,6 +73,18 @@
             "metadata": {
                 "description": "Resource Group name of the Storage Account for SQL DB auditing"
             }
+        },
+        "OMSRGName": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource Group name of the OMS workspace"
+            }
+        },
+        "workspacename": {
+            "type": "string",
+            "metadata": {
+                "description": "OMS workspace name"
+            }
         }
 
     },
@@ -80,6 +92,7 @@
         "sqlDatabaseName": "MyData",
         "sqlDatabaseServiceObjective": "Basic",
         "sqlDatabaseEdition": "Basic",
+        "DiagnosticsName": "DatabaseMetrics",
         "vnetID": "[resourceId(parameters('networkrgName'), 'Microsoft.Networks/virtualNetworks' ,parameters('vnetName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]"
     },
@@ -123,7 +136,38 @@
                             "properties": {
                                 "status": "Enabled"
                             }
-                        }
+                        },
+                        {
+                            "type": "providers/diagnosticSettings",
+                            "name": "[concat('Microsoft.Insights/',variables('DiagnosticsName'))]",
+                            "dependsOn": [
+                              "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerName'), variables('sqlDatabaseName'))]"
+                            ],
+                            "apiVersion": "2015-07-01",
+                            "properties": {
+                              "workspaceId": "[resourceId(parameters('OMSRGName'), 'Microsoft.OperationalInsights/workspaces', parameters('workspacename'))]",
+                              "logs": [
+                                {
+                                  "category": "DatabaseWaitStatistics",
+                                  "enabled": true,
+                                  "retentionPolicy": {
+                                    "days": 0,
+                                    "enabled": false
+                                  }
+                                }
+                              ],
+                              "metrics": [
+                                {
+                                  "timeGrain": "PT1M",
+                                  "enabled": true,
+                                  "retentionPolicy": {
+                                    "enabled": false,
+                                    "days": 0
+                                  }
+                                }
+                              ]
+                            }
+                          }
                     ]
                 },
                 {
