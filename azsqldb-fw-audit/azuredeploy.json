@@ -92,7 +92,6 @@
         "sqlDatabaseName": "MyData",
         "sqlDatabaseServiceObjective": "Basic",
         "sqlDatabaseEdition": "Basic",
-        "DiagnosticsName": "DatabaseMetrics",
         "vnetID": "[resourceId(parameters('networkrgName'), 'Microsoft.Networks/virtualNetworks' ,parameters('vnetName'))]",
         "subnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetName'))]"
     },
@@ -139,7 +138,7 @@
                         },
                         {
                             "type": "providers/diagnosticSettings",
-                            "name": "[concat('Microsoft.Insights/',variables('DiagnosticsName'))]",
+                            "name": "Microsoft.Insights/service",
                             "dependsOn": [
                               "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerName'), variables('sqlDatabaseName'))]"
                             ],
