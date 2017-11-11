@@ -155,7 +155,7 @@
                                   }
                                 }
                               ],
-                              "metrics": [
+                              "metrics": [  
                                 {
                                   "timeGrain": "PT1M",
                                   "enabled": true,
