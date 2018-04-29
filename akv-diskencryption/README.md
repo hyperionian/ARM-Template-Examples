@@ -1,4 +1,4 @@
-#
+# Azure Resource Manager Template for Azure VM Disk Encryption
 
 This template creates empty Key Vault with basic permissions for service principal to set secret keys and wrap them with KEK for Azure VM Disk Encryption.
 
