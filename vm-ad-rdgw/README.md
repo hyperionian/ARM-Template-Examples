@@ -1,4 +1,4 @@
-# Azure Resource Manager Template for AD Domain Controller and Remote Desktio Gateway/Web
+# Azure Resource Manager Template for AD Domain Controller and Remote Desktop Gateway/Web on Azure VM
 
 This template creates multiple Windows Azure Virtual Machines with one VM as AD domain controller and another VM in an availability set as Remote Desktop Gateway/Web joined to AD domain
 
